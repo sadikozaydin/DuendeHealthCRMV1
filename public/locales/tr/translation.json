@@ -1,0 +1,109 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "leads": "Lead'ler",
+    "patients": "Hastalar",
+    "appointments": "Randevular",
+    "treatments": "Tedavi Süreçleri",
+    "documents": "Evraklar",
+    "travel": "Seyahat",
+    "communication": "İletişim",
+    "offers": "Teklifler",
+    "internalChat": "İç Sohbet",
+    "branches": "Şubeler",
+    "settings": "Ayarlar"
+  },
+  "dashboard": {
+    "welcome": "Hoş Geldiniz"
+  },
+  "login": {
+    "title": "Duende Health CRM",
+    "subtitle": "Sağlık Turizmi Yönetim Sistemi",
+    "language": "Dil Seçimi",
+    "loginInfo": "Giriş Bilgileri",
+    "emailPlaceholder": "E-posta adresiniz",
+    "username": "Kullanıcı adı",
+    "password": "Şifre",
+    "login": "Giriş Yap",
+    "loggingIn": "Giriş yapılıyor...",
+    "forgotPassword": "Şifremi Unuttum",
+    "demoCredentials": "Demo Giriş Bilgileri",
+    "accessInfo": "Erişim Bilgileri",
+    "securityInfo": "Güvenlik bilgileri ve rol bazlı erişim kontrolü aktiftir.",
+    "kvkkConsent": "KVKK Aydınlatma Metni'ni okudum ve kabul ediyorum.",
+    "marketingConsent": "Pazarlama amaçlı iletişim kurulmasını kabul ediyorum.",
+    "security": {
+      "ssl": "256-bit SSL şifreleme ile korunur",
+      "compliance": "KVKK/GDPR uyumlu veri işleme",
+      "mfa": "İki faktörlü kimlik doğrulama desteği"
+    }
+  },
+  "common": {
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "add": "Ekle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "close": "Kapat",
+    "open": "Aç",
+    "view": "Görüntüle",
+    "download": "İndir",
+    "upload": "Yükle",
+    "send": "Gönder",
+    "back": "Geri",
+    "next": "İleri",
+    "previous": "Önceki",
+    "confirm": "Onayla",
+    "reject": "Reddet"
+  },
+  "patients": {
+    "title": "Hasta Yönetimi",
+    "subtitle": "Hasta kayıtları ve tedavi takibi",
+    "newPatient": "Yeni Hasta",
+    "totalPatients": "Toplam Hasta",
+    "activeTreatment": "Aktif Tedavi",
+    "discharged": "Taburcu",
+    "satisfaction": "Memnuniyet"
+  },
+  "appointments": {
+    "title": "Randevu Yönetimi",
+    "subtitle": "Randevu planlama ve takip sistemi",
+    "newAppointment": "Yeni Randevu",
+    "todayAppointments": "Bugünkü Randevular",
+    "pendingApproval": "Onay Bekleyen",
+    "thisWeek": "Bu Hafta",
+    "occupancyRate": "Doluluk Oranı"
+  },
+  "offers": {
+    "title": "Teklif Yönetimi",
+    "subtitle": "Tedavi teklifleri ve fiyatlandırma",
+    "activeTemplates": "Aktif Şablonlar",
+    "sentOffers": "Gönderilen Teklifler",
+    "averageConversion": "Ortalama Dönüşüm",
+    "totalValue": "Toplam Değer"
+  },
+  "settings": {
+    "title": "Sistem Ayarları",
+    "generalSettings": "Genel Ayarlar",
+    "leadAssignment": "Lead Atama",
+    "integrations": "Entegrasyonlar",
+    "roles": "Roller ve Yetkiler",
+    "users": "Kullanıcı Yönetimi",
+    "notifications": "Bildirimler",
+    "language": "Dil Ayarları",
+    "email": "E-posta Ayarları",
+    "clinic": "Klinik Ayarları",
+    "payment": "Ödeme Ayarları",
+    "templates": "Şablonlar",
+    "reports": "Raporlar",
+    "legalSecurity": "Yasal ve Güvenlik",
+    "aiAutomation": "AI ve Otomasyon",
+    "dataManagement": "Veri Yönetimi",
+    "help": "Yardım ve Destek"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "title": "Vista Previa de Oferta",
+  "patientInfo": "Información del Paciente",
+  "services": "Detalles del Servicio",
+  "send": "Enviar",
+  "edit": "Editar",
+  "download": "Descargar PDF",
+  "close": "Cerrar",
+  "status": {
+    "sent": "Enviado",
+    "accepted": "Aceptado",
+    "rejected": "Rechazado",
+    "negotiating": "Negociando",
+    "expired": "Expirado"
+  },
+  "fields": {
+    "fullName": "Nombre Completo",
+    "patientId": "ID del Paciente",
+    "phone": "Teléfono",
+    "email": "Correo Electrónico",
+    "service": "Servicio",
+    "description": "Descripción",
+    "amount": "Cantidad",
+    "total": "Total"
+  },
+  "validity": {
+    "expired": "Expirado",
+    "expiringToday": "Expira hoy",
+    "daysLeft": "{{count}} días restantes"
+  },
+  "messages": {
+    "noServices": "No hay servicios",
+    "privacyMasked": "La información de contacto ha sido enmascarada por privacidad",
+    "legalText": "Esta oferta es válida hasta {{validUntil}}. Los precios incluyen impuestos."
+  }
+}

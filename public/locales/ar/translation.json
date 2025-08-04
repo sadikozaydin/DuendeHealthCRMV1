@@ -1,0 +1,109 @@
+{
+  "navigation": {
+    "dashboard": "لوحة التحكم",
+    "leads": "العملاء المحتملون",
+    "patients": "المرضى",
+    "appointments": "المواعيد",
+    "treatments": "عمليات العلاج",
+    "documents": "الوثائق",
+    "travel": "السفر",
+    "communication": "التواصل",
+    "offers": "العروض",
+    "internalChat": "الدردشة الداخلية",
+    "branches": "الفروع",
+    "settings": "الإعدادات"
+  },
+  "dashboard": {
+    "welcome": "مرحباً بك"
+  },
+  "login": {
+    "title": "نظام إدارة السياحة الصحية",
+    "subtitle": "نظام إدارة السياحة الصحية",
+    "language": "اختيار اللغة",
+    "loginInfo": "معلومات تسجيل الدخول",
+    "emailPlaceholder": "عنوان بريدك الإلكتروني",
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "login": "تسجيل الدخول",
+    "loggingIn": "جاري تسجيل الدخول...",
+    "forgotPassword": "نسيت كلمة المرور",
+    "demoCredentials": "بيانات الدخول التجريبية",
+    "accessInfo": "معلومات الوصول",
+    "securityInfo": "معلومات الأمان والتحكم في الوصول القائم على الأدوار نشط.",
+    "kvkkConsent": "لقد قرأت وأوافق على سياسة الخصوصية.",
+    "marketingConsent": "أوافق على التواصل التسويقي.",
+    "security": {
+      "ssl": "محمي بتشفير SSL 256 بت",
+      "compliance": "معالجة البيانات المتوافقة مع GDPR",
+      "mfa": "دعم المصادقة الثنائية"
+    }
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تحرير",
+    "delete": "حذف",
+    "add": "إضافة",
+    "search": "بحث",
+    "filter": "تصفية",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "close": "إغلاق",
+    "open": "فتح",
+    "view": "عرض",
+    "download": "تحميل",
+    "upload": "رفع",
+    "send": "إرسال",
+    "back": "رجوع",
+    "next": "التالي",
+    "previous": "السابق",
+    "confirm": "تأكيد",
+    "reject": "رفض"
+  },
+  "patients": {
+    "title": "إدارة المرضى",
+    "subtitle": "سجلات المرضى وتتبع العلاج",
+    "newPatient": "مريض جديد",
+    "totalPatients": "إجمالي المرضى",
+    "activeTreatment": "العلاج النشط",
+    "discharged": "خرج من المستشفى",
+    "satisfaction": "الرضا"
+  },
+  "appointments": {
+    "title": "إدارة المواعيد",
+    "subtitle": "نظام جدولة وتتبع المواعيد",
+    "newAppointment": "موعد جديد",
+    "todayAppointments": "مواعيد اليوم",
+    "pendingApproval": "في انتظار الموافقة",
+    "thisWeek": "هذا الأسبوع",
+    "occupancyRate": "معدل الإشغال"
+  },
+  "offers": {
+    "title": "إدارة العروض",
+    "subtitle": "عروض العلاج والتسعير",
+    "activeTemplates": "القوالب النشطة",
+    "sentOffers": "العروض المرسلة",
+    "averageConversion": "متوسط التحويل",
+    "totalValue": "القيمة الإجمالية"
+  },
+  "settings": {
+    "title": "إعدادات النظام",
+    "generalSettings": "الإعدادات العامة",
+    "leadAssignment": "تعيين العملاء المحتملين",
+    "integrations": "التكاملات",
+    "roles": "الأدوار والصلاحيات",
+    "users": "إدارة المستخدمين",
+    "notifications": "الإشعارات",
+    "language": "إعدادات اللغة",
+    "email": "إعدادات البريد الإلكتروني",
+    "clinic": "إعدادات العيادة",
+    "payment": "إعدادات الدفع",
+    "templates": "القوالب",
+    "reports": "التقارير",
+    "legalSecurity": "القانونية والأمان",
+    "aiAutomation": "الذكاء الاصطناعي والأتمتة",
+    "dataManagement": "إدارة البيانات",
+    "help": "المساعدة والدعم"
+  }
+}

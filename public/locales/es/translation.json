@@ -1,0 +1,109 @@
+{
+  "navigation": {
+    "dashboard": "Panel de Control",
+    "leads": "Clientes Potenciales",
+    "patients": "Pacientes",
+    "appointments": "Citas",
+    "treatments": "Procesos de Tratamiento",
+    "documents": "Documentos",
+    "travel": "Viajes",
+    "communication": "Comunicación",
+    "offers": "Ofertas",
+    "internalChat": "Chat Interno",
+    "branches": "Sucursales",
+    "settings": "Configuración"
+  },
+  "dashboard": {
+    "welcome": "Bienvenido"
+  },
+  "login": {
+    "title": "Duende Health CRM",
+    "subtitle": "Sistema de Gestión de Turismo de Salud",
+    "language": "Selección de Idioma",
+    "loginInfo": "Información de Acceso",
+    "emailPlaceholder": "Su dirección de correo electrónico",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "login": "Iniciar Sesión",
+    "loggingIn": "Iniciando sesión...",
+    "forgotPassword": "Olvidé mi Contraseña",
+    "demoCredentials": "Credenciales de Demostración",
+    "accessInfo": "Información de Acceso",
+    "securityInfo": "La información de seguridad y el control de acceso basado en roles está activo.",
+    "kvkkConsent": "He leído y acepto la Política de Privacidad.",
+    "marketingConsent": "Acepto las comunicaciones de marketing.",
+    "security": {
+      "ssl": "Protegido con cifrado SSL de 256 bits",
+      "compliance": "Procesamiento de datos compatible con GDPR",
+      "mfa": "Soporte de autenticación de dos factores"
+    }
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "close": "Cerrar",
+    "open": "Abrir",
+    "view": "Ver",
+    "download": "Descargar",
+    "upload": "Subir",
+    "send": "Enviar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "confirm": "Confirmar",
+    "reject": "Rechazar"
+  },
+  "patients": {
+    "title": "Gestión de Pacientes",
+    "subtitle": "Registros de pacientes y seguimiento de tratamiento",
+    "newPatient": "Nuevo Paciente",
+    "totalPatients": "Total de Pacientes",
+    "activeTreatment": "Tratamiento Activo",
+    "discharged": "Dado de Alta",
+    "satisfaction": "Satisfacción"
+  },
+  "appointments": {
+    "title": "Gestión de Citas",
+    "subtitle": "Sistema de programación y seguimiento de citas",
+    "newAppointment": "Nueva Cita",
+    "todayAppointments": "Citas de Hoy",
+    "pendingApproval": "Pendiente de Aprobación",
+    "thisWeek": "Esta Semana",
+    "occupancyRate": "Tasa de Ocupación"
+  },
+  "offers": {
+    "title": "Gestión de Ofertas",
+    "subtitle": "Ofertas de tratamiento y precios",
+    "activeTemplates": "Plantillas Activas",
+    "sentOffers": "Ofertas Enviadas",
+    "averageConversion": "Conversión Promedio",
+    "totalValue": "Valor Total"
+  },
+  "settings": {
+    "title": "Configuración del Sistema",
+    "generalSettings": "Configuración General",
+    "leadAssignment": "Asignación de Clientes Potenciales",
+    "integrations": "Integraciones",
+    "roles": "Roles y Permisos",
+    "users": "Gestión de Usuarios",
+    "notifications": "Notificaciones",
+    "language": "Configuración de Idioma",
+    "email": "Configuración de Correo",
+    "clinic": "Configuración de Clínica",
+    "payment": "Configuración de Pago",
+    "templates": "Plantillas",
+    "reports": "Informes",
+    "legalSecurity": "Legal y Seguridad",
+    "aiAutomation": "IA y Automatización",
+    "dataManagement": "Gestión de Datos",
+    "help": "Ayuda y Soporte"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "offer": {
+    "title": "Titolo dell'offerta non specificato",
+    "patientName": "Nome del paziente non specificato",
+    "offerId": "N. Offerta",
+    "createdAt": "Creato",
+    "validUntil": "Valido fino a",
+    "status": {
+      "sent": "Inviato",
+      "accepted": "Accettato",
+      "negotiating": "Negoziazione",
+      "rejected": "Rifiutato",
+      "expired": "Scaduto",
+      "pending": "Stato non specificato"
+    },
+    "sections": {
+      "patientInfo": "Informazioni Paziente",
+      "services": "Dettagli Servizio",
+      "statusChange": "Cambia Stato Offerta",
+      "paymentTerms": "Termini di Pagamento e Contatto",
+      "notes": "Note Aggiuntive",
+      "legalWarning": "Avviso Legale"
+    },
+    "fields": {
+      "fullName": "Nome Completo",
+      "patientId": "ID Paziente",
+      "phone": "Telefono",
+      "email": "Email",
+      "service": "Servizio",
+      "description": "Descrizione",
+      "amount": "Importo",
+      "total": "Totale",
+      "paymentMethod": "Metodo di Pagamento",
+      "contactInfo": "Informazioni di Contatto"
+    },
+    "actions": {
+      "edit": "Modifica",
+      "send": "Invia",
+      "download": "Scarica PDF",
+      "preview": "Anteprima PDF",
+      "close": "Chiudi"
+    },
+    "validity": {
+      "expired": "Scaduto",
+      "expiringToday": "Scade oggi",
+      "daysLeft": "{{count}} giorni rimanenti"
+    },
+    "messages": {
+      "noServices": "Informazioni sul servizio non trovate",
+      "addServices": "Si prega di modificare l'offerta per aggiungere servizi",
+      "privacyMasked": "Le informazioni di contatto sono state mascherate per motivi di privacy.",
+      "privacyPolicy": "Politica sulla Privacy",
+      "legalText": "Questa offerta è valida fino al {{validUntil}}. I prezzi includono IVA. I dettagli del trattamento e le condizioni possono variare.",
+      "createdBy": "Creato da {{createdBy}} il {{date}}"
+    },
+    "paymentTerms": {
+      "fullAdvance": "50% pagamento anticipato",
+      "beforeTreatment": "50% prima dell'intervento"
+    },
+    "loading": {
+      "editing": "Modifica...",
+      "sending": "Invio...",
+      "downloading": "Download...",
+      "previewing": "Anteprima PDF...",
+      "processing": "Elaborazione..."
+    }
+  }
+}

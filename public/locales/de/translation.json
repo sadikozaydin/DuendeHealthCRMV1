@@ -1,0 +1,109 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "leads": "Interessenten",
+    "patients": "Patienten",
+    "appointments": "Termine",
+    "treatments": "Behandlungsprozesse",
+    "documents": "Dokumente",
+    "travel": "Reisen",
+    "communication": "Kommunikation",
+    "offers": "Angebote",
+    "internalChat": "Interner Chat",
+    "branches": "Filialen",
+    "settings": "Einstellungen"
+  },
+  "dashboard": {
+    "welcome": "Willkommen"
+  },
+  "login": {
+    "title": "Duende Health CRM",
+    "subtitle": "Gesundheitstourismus-Managementsystem",
+    "language": "Sprachauswahl",
+    "loginInfo": "Anmeldeinformationen",
+    "emailPlaceholder": "Ihre E-Mail-Adresse",
+    "username": "Benutzername",
+    "password": "Passwort",
+    "login": "Anmelden",
+    "loggingIn": "Anmeldung läuft...",
+    "forgotPassword": "Passwort vergessen",
+    "demoCredentials": "Demo-Anmeldedaten",
+    "accessInfo": "Zugriffsinformationen",
+    "securityInfo": "Sicherheitsinformationen und rollenbasierte Zugriffskontrolle sind aktiv.",
+    "kvkkConsent": "Ich habe die Datenschutzrichtlinie gelesen und akzeptiere sie.",
+    "marketingConsent": "Ich stimme Marketing-Kommunikation zu.",
+    "security": {
+      "ssl": "Geschützt mit 256-Bit-SSL-Verschlüsselung",
+      "compliance": "DSGVO-konforme Datenverarbeitung",
+      "mfa": "Zwei-Faktor-Authentifizierung-Unterstützung"
+    }
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "loading": "Laden...",
+    "error": "Fehler",
+    "success": "Erfolg",
+    "close": "Schließen",
+    "open": "Öffnen",
+    "view": "Anzeigen",
+    "download": "Herunterladen",
+    "upload": "Hochladen",
+    "send": "Senden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "previous": "Vorherige",
+    "confirm": "Bestätigen",
+    "reject": "Ablehnen"
+  },
+  "patients": {
+    "title": "Patientenverwaltung",
+    "subtitle": "Patientenakten und Behandlungsverfolgung",
+    "newPatient": "Neuer Patient",
+    "totalPatients": "Gesamte Patienten",
+    "activeTreatment": "Aktive Behandlung",
+    "discharged": "Entlassen",
+    "satisfaction": "Zufriedenheit"
+  },
+  "appointments": {
+    "title": "Terminverwaltung",
+    "subtitle": "Terminplanung und Verfolgungssystem",
+    "newAppointment": "Neuer Termin",
+    "todayAppointments": "Heutige Termine",
+    "pendingApproval": "Genehmigung ausstehend",
+    "thisWeek": "Diese Woche",
+    "occupancyRate": "Auslastungsrate"
+  },
+  "offers": {
+    "title": "Angebotsverwaltung",
+    "subtitle": "Behandlungsangebote und Preisgestaltung",
+    "activeTemplates": "Aktive Vorlagen",
+    "sentOffers": "Gesendete Angebote",
+    "averageConversion": "Durchschnittliche Konversion",
+    "totalValue": "Gesamtwert"
+  },
+  "settings": {
+    "title": "Systemeinstellungen",
+    "generalSettings": "Allgemeine Einstellungen",
+    "leadAssignment": "Lead-Zuweisung",
+    "integrations": "Integrationen",
+    "roles": "Rollen und Berechtigungen",
+    "users": "Benutzerverwaltung",
+    "notifications": "Benachrichtigungen",
+    "language": "Spracheinstellungen",
+    "email": "E-Mail-Einstellungen",
+    "clinic": "Klinikeinstellungen",
+    "payment": "Zahlungseinstellungen",
+    "templates": "Vorlagen",
+    "reports": "Berichte",
+    "legalSecurity": "Rechtliches und Sicherheit",
+    "aiAutomation": "KI und Automatisierung",
+    "dataManagement": "Datenverwaltung",
+    "help": "Hilfe und Support"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "title": "Edit Offer",
+  "subtitle": "Edit offer details",
+  "sections": {
+    "title": "Offer Title",
+    "leadInfo": "Lead (Patient) Information",
+    "currency": "Currency",
+    "services": "Offer Content (Service List)",
+    "status": "Offer Status",
+    "validity": "Validity Date",
+    "template": "PDF or HTML Template File",
+    "notes": "Offer Notes (Optional)",
+    "changeLog": "Change History",
+    "discount": "Discount Settings"
+  },
+  "fields": {
+    "offerTitle": "Offer Title",
+    "patientName": "Patient Name",
+    "patientId": "Patient ID",
+    "serviceName": "Service Name",
+    "description": "Description",
+    "quantity": "Quantity",
+    "unitPrice": "Unit Price",
+    "total": "Total",
+    "currency": "Currency",
+    "validUntil": "Valid Until",
+    "notes": "Notes",
+    "templateFile": "Template File",
+    "discountType": "Discount Type",
+    "discountValue": "Discount Amount"
+  },
+  "placeholders": {
+    "offerTitle": "e.g. Heart Surgery Package",
+    "serviceName": "e.g. Heart Surgery",
+    "description": "Service details...",
+    "notes": "Additional comments about the offer, special conditions..."
+  },
+  "buttons": {
+    "addService": "Add Service",
+    "removeService": "Remove Service",
+    "preview": "Preview",
+    "save": "Save",
+    "cancel": "Cancel",
+    "uploadTemplate": "Upload Template",
+    "downloadTemplate": "Download Template",
+    "previewTemplate": "Preview Template"
+  },
+  "messages": {
+    "noServices": "No services added yet",
+    "addFirstService": "Add First Service",
+    "templateUploaded": "Template file uploaded",
+    "changesMade": "changes made",
+    "validationError": "Please fill in all required fields",
+    "serviceValidationError": "All services must have name and amount filled",
+    "pastDateError": "Validity date cannot be in the past",
+    "saving": "Saving...",
+    "previewing": "Previewing..."
+  },
+  "status": {
+    "sent": "Sent",
+    "accepted": "Accepted",
+    "negotiating": "Negotiating",
+    "rejected": "Rejected",
+    "expired": "Expired"
+  },
+  "discount": {
+    "none": "No Discount",
+    "percentage": "Percentage",
+    "fixed": "Fixed Amount"
+  },
+  "supportedFormats": "Supported formats: PDF, HTML",
+  "maxFileSize": "Maximum file size: 10MB",
+  "totalAmount": "Total Amount"
+}

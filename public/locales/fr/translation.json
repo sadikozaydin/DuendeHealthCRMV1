@@ -1,0 +1,109 @@
+{
+  "navigation": {
+    "dashboard": "Tableau de Bord",
+    "leads": "Prospects",
+    "patients": "Patients",
+    "appointments": "Rendez-vous",
+    "treatments": "Processus de Traitement",
+    "documents": "Documents",
+    "travel": "Voyage",
+    "communication": "Communication",
+    "offers": "Offres",
+    "internalChat": "Chat Interne",
+    "branches": "Succursales",
+    "settings": "Paramètres"
+  },
+  "dashboard": {
+    "welcome": "Bienvenue"
+  },
+  "login": {
+    "title": "Duende Health CRM",
+    "subtitle": "Système de Gestion du Tourisme de Santé",
+    "language": "Sélection de Langue",
+    "loginInfo": "Informations de Connexion",
+    "emailPlaceholder": "Votre adresse e-mail",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "login": "Se Connecter",
+    "loggingIn": "Connexion en cours...",
+    "forgotPassword": "Mot de passe oublié",
+    "demoCredentials": "Identifiants de Démonstration",
+    "accessInfo": "Informations d'Accès",
+    "securityInfo": "Les informations de sécurité et le contrôle d'accès basé sur les rôles sont actifs.",
+    "kvkkConsent": "J'ai lu et j'accepte la Politique de Confidentialité.",
+    "marketingConsent": "J'accepte les communications marketing.",
+    "security": {
+      "ssl": "Protégé par un chiffrement SSL 256 bits",
+      "compliance": "Traitement des données conforme au RGPD",
+      "mfa": "Support d'authentification à deux facteurs"
+    }
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "add": "Ajouter",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "close": "Fermer",
+    "open": "Ouvrir",
+    "view": "Voir",
+    "download": "Télécharger",
+    "upload": "Téléverser",
+    "send": "Envoyer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "confirm": "Confirmer",
+    "reject": "Rejeter"
+  },
+  "patients": {
+    "title": "Gestion des Patients",
+    "subtitle": "Dossiers patients et suivi des traitements",
+    "newPatient": "Nouveau Patient",
+    "totalPatients": "Total des Patients",
+    "activeTreatment": "Traitement Actif",
+    "discharged": "Sorti",
+    "satisfaction": "Satisfaction"
+  },
+  "appointments": {
+    "title": "Gestion des Rendez-vous",
+    "subtitle": "Système de planification et de suivi des rendez-vous",
+    "newAppointment": "Nouveau Rendez-vous",
+    "todayAppointments": "Rendez-vous d'Aujourd'hui",
+    "pendingApproval": "En Attente d'Approbation",
+    "thisWeek": "Cette Semaine",
+    "occupancyRate": "Taux d'Occupation"
+  },
+  "offers": {
+    "title": "Gestion des Offres",
+    "subtitle": "Offres de traitement et tarification",
+    "activeTemplates": "Modèles Actifs",
+    "sentOffers": "Offres Envoyées",
+    "averageConversion": "Conversion Moyenne",
+    "totalValue": "Valeur Totale"
+  },
+  "settings": {
+    "title": "Paramètres du Système",
+    "generalSettings": "Paramètres Généraux",
+    "leadAssignment": "Attribution des Prospects",
+    "integrations": "Intégrations",
+    "roles": "Rôles et Permissions",
+    "users": "Gestion des Utilisateurs",
+    "notifications": "Notifications",
+    "language": "Paramètres de Langue",
+    "email": "Paramètres E-mail",
+    "clinic": "Paramètres de Clinique",
+    "payment": "Paramètres de Paiement",
+    "templates": "Modèles",
+    "reports": "Rapports",
+    "legalSecurity": "Légal et Sécurité",
+    "aiAutomation": "IA et Automatisation",
+    "dataManagement": "Gestion des Données",
+    "help": "Aide et Support"
+  }
+}

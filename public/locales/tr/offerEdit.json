@@ -1,0 +1,80 @@
+{
+  "title": "Teklif Düzenle",
+  "subtitle": "Teklif detaylarını düzenleyin",
+  "sections": {
+    "title": "Teklif Başlığı",
+    "leadInfo": "Lead (Hasta) Bilgileri", 
+    "currency": "Para Birimi",
+    "services": "Teklif İçeriği (Hizmet Listesi)",
+    "status": "Teklif Durumu",
+    "validity": "Geçerlilik Tarihi",
+    "template": "PDF veya HTML Şablon Dosyası",
+    "notes": "Teklif Notları (İsteğe Bağlı)",
+    "changeLog": "Değişiklik Geçmişi",
+    "discount": "İndirim Ayarları"
+  },
+  "fields": {
+    "offerTitle": "Teklif Başlığı",
+    "patientName": "Hasta Adı",
+    "patientId": "Hasta ID",
+    "serviceName": "Hizmet Adı",
+    "description": "Açıklama",
+    "quantity": "Miktar",
+    "unitPrice": "Birim Fiyat",
+    "total": "Toplam",
+    "currency": "Para Birimi",
+    "validUntil": "Geçerlilik Tarihi",
+    "notes": "Notlar",
+    "templateFile": "Şablon Dosyası",
+    "discountType": "İndirim Türü",
+    "discountValue": "İndirim Miktarı"
+  },
+  "placeholders": {
+    "offerTitle": "Örn: Kalp Cerrahisi Paketi",
+    "serviceName": "Örn: Kalp Cerrahisi",
+    "description": "Hizmet detayları...",
+    "notes": "Teklif hakkında ek açıklamalar, özel koşullar..."
+  },
+  "buttons": {
+    "addService": "Hizmet Ekle",
+    "removeService": "Hizmeti Kaldır",
+    "preview": "Önizle",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "uploadTemplate": "Şablon Yükle",
+    "downloadTemplate": "Şablonu İndir",
+    "previewTemplate": "Şablonu Önizle"
+  },
+  "messages": {
+    "noServices": "Henüz hizmet eklenmedi",
+    "addFirstService": "İlk Hizmeti Ekle",
+    "templateUploaded": "Şablon dosyası yüklendi",
+    "changesMade": "değişiklik yapıldı",
+    "validationError": "Lütfen tüm zorunlu alanları doldurun",
+    "serviceValidationError": "Tüm hizmetlerin adı ve tutarı doldurulmalıdır",
+    "pastDateError": "Geçerlilik tarihi bugünden eski olamaz",
+    "saving": "Kaydediliyor...",
+    "previewing": "Önizleniyor..."
+  },
+  "status": {
+    "sent": "Gönderildi",
+    "accepted": "Kabul Edildi",
+    "negotiating": "Müzakere",
+    "rejected": "Reddedildi",
+    "expired": "Süresi Doldu"
+  },
+  "discount": {
+    "none": "İndirim Yok",
+    "percentage": "Yüzde",
+    "fixed": "Sabit Tutar"
+  },
+  "supportedFormats": "Desteklenen formatlar: PDF, HTML",
+  "maxFileSize": "Maksimum dosya boyutu: 10MB",
+  "totalAmount": "Toplam Tutar",
+  "validation": {
+    "amountMustBePositive": "Tutar 0'dan büyük olmalıdır",
+    "fileSizeExceeded": "Dosya boyutu 5MB'ı geçemez",
+    "invalidFileType": "Sadece HTML ve PDF dosyaları desteklenir",
+    "updateError": "Teklif güncellenirken bir hata oluştu"
+  }
+}

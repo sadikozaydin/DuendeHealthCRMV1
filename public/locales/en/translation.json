@@ -1,0 +1,109 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "leads": "Leads",
+    "patients": "Patients",
+    "appointments": "Appointments",
+    "treatments": "Treatment Processes",
+    "documents": "Documents",
+    "travel": "Travel",
+    "communication": "Communication",
+    "offers": "Offers",
+    "internalChat": "Internal Chat",
+    "branches": "Branches",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "welcome": "Welcome"
+  },
+  "login": {
+    "title": "Duende Health CRM",
+    "subtitle": "Health Tourism Management System",
+    "language": "Language Selection",
+    "loginInfo": "Login Information",
+    "emailPlaceholder": "Your email address",
+    "username": "Username",
+    "password": "Password",
+    "login": "Sign In",
+    "loggingIn": "Signing in...",
+    "forgotPassword": "Forgot Password",
+    "demoCredentials": "Demo Login Credentials",
+    "accessInfo": "Access Information",
+    "securityInfo": "Security information and role-based access control is active.",
+    "kvkkConsent": "I have read and accept the Privacy Policy.",
+    "marketingConsent": "I consent to marketing communications.",
+    "security": {
+      "ssl": "Protected with 256-bit SSL encryption",
+      "compliance": "GDPR compliant data processing",
+      "mfa": "Two-factor authentication support"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "open": "Open",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "send": "Send",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "confirm": "Confirm",
+    "reject": "Reject"
+  },
+  "patients": {
+    "title": "Patient Management",
+    "subtitle": "Patient records and treatment tracking",
+    "newPatient": "New Patient",
+    "totalPatients": "Total Patients",
+    "activeTreatment": "Active Treatment",
+    "discharged": "Discharged",
+    "satisfaction": "Satisfaction"
+  },
+  "appointments": {
+    "title": "Appointment Management",
+    "subtitle": "Appointment scheduling and tracking system",
+    "newAppointment": "New Appointment",
+    "todayAppointments": "Today's Appointments",
+    "pendingApproval": "Pending Approval",
+    "thisWeek": "This Week",
+    "occupancyRate": "Occupancy Rate"
+  },
+  "offers": {
+    "title": "Offer Management",
+    "subtitle": "Treatment offers and pricing",
+    "activeTemplates": "Active Templates",
+    "sentOffers": "Sent Offers",
+    "averageConversion": "Average Conversion",
+    "totalValue": "Total Value"
+  },
+  "settings": {
+    "title": "System Settings",
+    "generalSettings": "General Settings",
+    "leadAssignment": "Lead Assignment",
+    "integrations": "Integrations",
+    "roles": "Roles and Permissions",
+    "users": "User Management",
+    "notifications": "Notifications",
+    "language": "Language Settings",
+    "email": "Email Settings",
+    "clinic": "Clinic Settings",
+    "payment": "Payment Settings",
+    "templates": "Templates",
+    "reports": "Reports",
+    "legalSecurity": "Legal and Security",
+    "aiAutomation": "AI and Automation",
+    "dataManagement": "Data Management",
+    "help": "Help and Support"
+  }
+}

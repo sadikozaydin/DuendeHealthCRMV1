@@ -1,0 +1,74 @@
+{
+  "title": "تحرير العرض",
+  "subtitle": "تحرير تفاصيل العرض",
+  "sections": {
+    "title": "عنوان العرض",
+    "leadInfo": "معلومات العميل المحتمل (المريض)",
+    "currency": "العملة",
+    "services": "محتوى العرض (قائمة الخدمات)",
+    "status": "حالة العرض",
+    "validity": "تاريخ الصلاحية",
+    "template": "ملف قالب PDF أو HTML",
+    "notes": "ملاحظات العرض (اختياري)",
+    "changeLog": "سجل التغييرات",
+    "discount": "إعدادات الخصم"
+  },
+  "fields": {
+    "offerTitle": "عنوان العرض",
+    "patientName": "اسم المريض",
+    "patientId": "معرف المريض",
+    "serviceName": "اسم الخدمة",
+    "description": "الوصف",
+    "quantity": "الكمية",
+    "unitPrice": "سعر الوحدة",
+    "total": "الإجمالي",
+    "currency": "العملة",
+    "validUntil": "صالح حتى",
+    "notes": "الملاحظات",
+    "templateFile": "ملف القالب",
+    "discountType": "نوع الخصم",
+    "discountValue": "مقدار الخصم"
+  },
+  "placeholders": {
+    "offerTitle": "مثال: حزمة جراحة القلب",
+    "serviceName": "مثال: جراحة القلب",
+    "description": "تفاصيل الخدمة...",
+    "notes": "تعليقات إضافية حول العرض، شروط خاصة..."
+  },
+  "buttons": {
+    "addService": "إضافة خدمة",
+    "removeService": "إزالة الخدمة",
+    "preview": "معاينة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "uploadTemplate": "رفع قالب",
+    "downloadTemplate": "تحميل القالب",
+    "previewTemplate": "معاينة القالب"
+  },
+  "messages": {
+    "noServices": "لم يتم إضافة خدمات بعد",
+    "addFirstService": "إضافة الخدمة الأولى",
+    "templateUploaded": "تم رفع ملف القالب",
+    "changesMade": "تم إجراء تغييرات",
+    "validationError": "يرجى ملء جميع الحقول المطلوبة",
+    "serviceValidationError": "يجب ملء اسم ومبلغ جميع الخدمات",
+    "pastDateError": "لا يمكن أن يكون تاريخ الصلاحية في الماضي",
+    "saving": "جاري الحفظ...",
+    "previewing": "جاري المعاينة..."
+  },
+  "status": {
+    "sent": "مُرسل",
+    "accepted": "مقبول",
+    "negotiating": "قيد التفاوض",
+    "rejected": "مرفوض",
+    "expired": "منتهي الصلاحية"
+  },
+  "discount": {
+    "none": "بدون خصم",
+    "percentage": "نسبة مئوية",
+    "fixed": "مبلغ ثابت"
+  },
+  "supportedFormats": "الصيغ المدعومة: PDF، HTML",
+  "maxFileSize": "الحد الأقصى لحجم الملف: 10 ميجابايت",
+  "totalAmount": "المبلغ الإجمالي"
+}

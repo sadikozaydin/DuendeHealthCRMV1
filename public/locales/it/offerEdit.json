@@ -1,0 +1,74 @@
+{
+  "title": "Modifica Offerta",
+  "subtitle": "Modifica i dettagli dell'offerta",
+  "sections": {
+    "title": "Titolo dell'Offerta",
+    "leadInfo": "Informazioni Lead (Paziente)",
+    "currency": "Valuta",
+    "services": "Contenuto dell'Offerta (Lista Servizi)",
+    "status": "Stato dell'Offerta",
+    "validity": "Data di Validità",
+    "template": "File Template PDF o HTML",
+    "notes": "Note dell'Offerta (Opzionale)",
+    "changeLog": "Cronologia Modifiche",
+    "discount": "Impostazioni Sconto"
+  },
+  "fields": {
+    "offerTitle": "Titolo dell'Offerta",
+    "patientName": "Nome del Paziente",
+    "patientId": "ID Paziente",
+    "serviceName": "Nome del Servizio",
+    "description": "Descrizione",
+    "quantity": "Quantità",
+    "unitPrice": "Prezzo Unitario",
+    "total": "Totale",
+    "currency": "Valuta",
+    "validUntil": "Valido Fino a",
+    "notes": "Note",
+    "templateFile": "File Template",
+    "discountType": "Tipo di Sconto",
+    "discountValue": "Valore Sconto"
+  },
+  "placeholders": {
+    "offerTitle": "es. Pacchetto Chirurgia Cardiaca",
+    "serviceName": "es. Chirurgia Cardiaca",
+    "description": "Dettagli del servizio...",
+    "notes": "Commenti aggiuntivi sull'offerta, condizioni speciali..."
+  },
+  "buttons": {
+    "addService": "Aggiungi Servizio",
+    "removeService": "Rimuovi Servizio",
+    "preview": "Anteprima",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "uploadTemplate": "Carica Template",
+    "downloadTemplate": "Scarica Template",
+    "previewTemplate": "Anteprima Template"
+  },
+  "messages": {
+    "noServices": "Nessun servizio aggiunto ancora",
+    "addFirstService": "Aggiungi Primo Servizio",
+    "templateUploaded": "File template caricato",
+    "changesMade": "modifiche effettuate",
+    "validationError": "Si prega di compilare tutti i campi obbligatori",
+    "serviceValidationError": "Tutti i servizi devono avere nome e importo compilati",
+    "pastDateError": "La data di validità non può essere nel passato",
+    "saving": "Salvando...",
+    "previewing": "Anteprima..."
+  },
+  "status": {
+    "sent": "Inviato",
+    "accepted": "Accettato",
+    "negotiating": "Negoziazione",
+    "rejected": "Rifiutato",
+    "expired": "Scaduto"
+  },
+  "discount": {
+    "none": "Nessuno Sconto",
+    "percentage": "Percentuale",
+    "fixed": "Importo Fisso"
+  },
+  "supportedFormats": "Formati supportati: PDF, HTML",
+  "maxFileSize": "Dimensione massima file: 10MB",
+  "totalAmount": "Importo Totale"
+}

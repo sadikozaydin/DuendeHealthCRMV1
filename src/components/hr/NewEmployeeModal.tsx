@@ -347,7 +347,7 @@ const NewEmployeeModal: React.FC<NewEmployeeModalProps> = ({
                 <UserPlus className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">👥 Yeni Personel Ekle</h2>
+                <h2 className="text-2xl font-bold">Yeni Personel Ekle</h2>
                 <div className="text-blue-100 text-sm">
                   Personel kaydı ve kullanıcı hesabı oluşturma
                 </div>

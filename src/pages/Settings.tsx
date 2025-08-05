@@ -52,7 +52,7 @@ const Settings = () => {
     { id: 'legal-security', label: t('settings.legalSecurity'), icon: Shield, description: 'KVKK/GDPR uyumu ve güvenlik politikaları' },
     { id: 'ai-automation', label: t('settings.aiAutomation'), icon: Bot, description: 'Yapay zeka ve otomasyon ayarları' },
     { id: 'data-management', label: t('settings.dataManagement'), icon: Database, description: 'LocalStorage veri yönetimi ve yedekleme' },
-    { id: 'help', label: t('settings.help'), icon: HelpCircle, description: 'Dokümantasyon ve destek kaynakları' }
+    { id: 'help', label: t('Even though your project is already optimized, it's now too big to handle. Try using a <code>.bolt/ignore</code> file or splitting your project into smaller parts. Need help? You'll find all the steps below.
   ];
 
   const renderGeneralSettings = () => (
@@ -767,8 +767,6 @@ const Settings = () => {
         return <UserManagement />;
       case 'inventory':
         return <InventoryManagement />;
-      case 'partners':
-        return <PartnerManagement />;
       case 'payments':
         return <PaymentManagement />;
       case 'patient-portal':

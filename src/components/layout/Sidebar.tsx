@@ -16,7 +16,6 @@ import {
   Package,
   CreditCard,
   MessageCircle,
-  Handshake,
   Globe,
   Briefcase,
   Bot,

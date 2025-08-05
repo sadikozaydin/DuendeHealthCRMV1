@@ -1,560 +1,836 @@
-import React, { useState, useEffect } from 'react';
-import { Listbox, Transition } from '@headlessui/react';
-import { Fragment } from 'react';
-import { Eye, EyeOff, Shield, Globe, Building2, Smartphone, AlertTriangle, CheckCircle, Loader2, Lock, User, Mail, Phone, Key, Languages, MapPin, Stethoscope, Heart, ChevronsDownUp as ChevronUpDown, Check } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { useBranch } from '../contexts/BranchContext';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { 
+  Settings as SettingsIcon, 
+  Building2, 
+  Users, 
+  Shield, 
+  Database, 
+  Bell,
+  Globe,
+  Mail,
+  CreditCard,
+  FileText,
+  BarChart3,
+  HelpCircle,
+  UserPlus,
+  Zap,
+  Bot,
+  Package,
+  Handshake
+} from 'lucide-react';
+import { useBranch } from '../contexts/BranchContext';
+import RolePermissionManagement from './RolePermissionManagement';
+import LegalSecurityCompliance from './LegalSecurityCompliance';
+import EmailSettings from '../components/settings/EmailSettings';
+import AIAutomationImprovement from './AIAutomationImprovement';
+import UserManagement from './UserManagement';
+import InventoryManagement from './InventoryManagement';
+import PartnerManagement from './PartnerManagement';
+import PaymentManagement from './PaymentManagement';
+import PatientPortal from './PatientPortal';
+import DataExportImport from '../components/common/DataExportImport';
 
-interface LoginFormData {
-  identifier: string;
-  password: string;
-  twoFactorCode: string;
-  selectedBranch: string;
-  language: string;
-  privacyConsent: boolean;
-  kvkkConsent: boolean;
-}
+const Settings = () => {
+  const { t } = useTranslation();
+  const { branchSettings, toggleMultiBranch, branches } = useBranch();
+  const [activeTab, setActiveTab] = useState('general');
 
-const Login = () => {
-  const { login, isLoading, error } = useAuth();
-  const { branches, branchSettings } = useBranch();
-  const { t, i18n } = useTranslation();
-  
-  const [formData, setFormData] = useState<LoginFormData>({
-    identifier: '',
-    password: '',
-    twoFactorCode: '',
-    selectedBranch: '',
-    language: i18n.language || 'tr',
-    privacyConsent: false,
-    kvkkConsent: false
-  });
+  const tabs = [
+    { id: 'general', label: t('settings.generalSettings'), icon: SettingsIcon, description: 'Sistem genel ayarları ve tercihler' },
+    { id: 'lead-assignment', label: t('settings.leadAssignment'), icon: UserPlus, description: 'Lead atama kuralları ve KPI metrikleri' },
+    { id: 'integrations', label: t('settings.integrations'), icon: Zap, description: 'Harici servisler ve API entegrasyonları' },
+    { id: 'roles', label: t('settings.roles'), icon: Shield, description: 'Kullanıcı rolleri ve yetkilendirme' },
+    { id: 'users', label: t('settings.users'), icon: Users, description: 'Kullanıcı hesapları ve erişim kontrolü' },
+    { id: 'notifications', label: t('settings.notifications'), icon: Bell, description: 'Sistem bildirimleri ve hatırlatıcılar' },
+    { id: 'language', label: t('settings.language'), icon: Globe, description: 'Dil, para birimi ve bölge ayarları' },
+    { id: 'email', label: t('settings.email'), icon: Mail, description: 'SMTP yapılandırması ve şablonlar' },
+    { id: 'clinic', label: t('settings.clinic'), icon: Building2, description: 'Klinik ve şube bilgileri' },
+    { id: 'payment', label: t('settings.payment'), icon: CreditCard, description: 'Ödeme yöntemleri ve gateway yapılandırması' },
+    { id: 'templates', label: t('settings.templates'), icon: FileText, description: 'Sözleşme ve form şablonları' },
+    { id: 'reports', label: t('settings.reports'), icon: BarChart3, description: 'Raporlama ve analiz yapılandırması' },
+    { id: 'legal-security', label: t('settings.legalSecurity'), icon: Shield, description: 'KVKK/GDPR uyumu ve güvenlik politikaları' },
+    { id: 'ai-automation', label: t('settings.aiAutomation'), icon: Bot, description: 'Yapay zeka ve otomasyon ayarları' },
+    { id: 'data-management', label: t('settings.dataManagement'), icon: Database, description: 'LocalStorage veri yönetimi ve yedekleme' },
+    { id: 'help', label: t('Even though your project is already optimized, it's now too big to handle. Try using a <code>.bolt/ignore</code> file or splitting your project into smaller parts. Need help? You'll find all the steps below.
+  ];
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [show2FA, setShow2FA] = useState(false);
-  const [loginType, setLoginType] = useState<'email' | 'username' | 'phone'>('email');
-  const [securityWarnings, setSecurityWarnings] = useState<string[]>([]);
-  const [attemptCount, setAttemptCount] = useState(0);
-  const [isBlocked, setIsBlocked] = useState(false);
-  const [blockTimeRemaining, setBlockTimeRemaining] = useState(0);
-  const [passwordError, setPasswordError] = useState<string | null>(null);
-
-  // Dil seçenekleri
-  const languageOptions = React.useMemo(() => [
-    { code: 'tr', name: 'Türkçe', flag: '/tr.png' },
-    { code: 'en', name: 'English', flag: '/en.png' },
-    { code: 'ar', name: 'العربية', flag: '/ar.png' },
-    { code: 'es', name: 'Español', flag: '/es.png' },
-    { code: 'de', name: 'Deutsch', flag: '/de.png' },
-    { code: 'fr', name: 'Français', flag: '/fr.png' },
-    { code: 'ru', name: 'Русский', flag: '/ru.png' }
-  ], []);
-
-  // Memoized current language data
-  const currentLanguageData = React.useMemo(() => 
-    languageOptions.find(lang => lang.code === formData.language) || languageOptions[0],
-    [languageOptions, formData.language]
+  const renderGeneralSettings = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Genel Sistem Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sistem Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur CRM"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Şirket Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur Medikal"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Zaman Dilimi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="Europe/Istanbul">Türkiye (UTC+3)</option>
+              <option value="Europe/London">Londra (UTC+0)</option>
+              <option value="Asia/Dubai">Dubai (UTC+4)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tarih Formatı
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Sistem Tercihleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Otomatik Yedekleme</h5>
+              <p className="text-sm text-gray-600">Günlük otomatik veri yedeklemesi</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Gelişmiş Güvenlik</h5>
+              <p className="text-sm text-gray-600">İki faktörlü kimlik doğrulama</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 
-  // Giriş türü tespiti
-  const detectLoginType = React.useCallback((value: string) => {
-    if (value.includes('@')) return 'email';
-    if (value.match(/^\+?[\d\s-()]+$/)) return 'phone';
-    return 'username';
-  }, []);
-
-  // Form değişiklik handler'ı
-  const handleInputChange = React.useCallback((field: keyof LoginFormData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-
-    // Dil değişikliği
-    if (field === 'language' && typeof value === 'string') {
-      i18n.changeLanguage(value);
-    }
-
-    // Password validation - sadece uyarı amaçlı, giriş engellemez
-    if (field === 'password' && typeof value === 'string' && value.length > 0 && value.length < 6) {
-      setPasswordError('Şifre çok kısa olabilir');
-    } else {
-      setPasswordError(null);
-    }
-    
-    if (field === 'identifier' && typeof value === 'string') {
-      setLoginType(detectLoginType(value));
-    }
-  }, [detectLoginType, i18n]);
-
-  // Güvenlik kontrolü
-  const performSecurityCheck = () => {
-    const warnings: string[] = [];
-    
-    // Çoklu başarısız giriş kontrolü
-    if (attemptCount >= 3) {
-      warnings.push('Çoklu başarısız giriş denemesi tespit edildi');
-    }
-    
-    // KVKK onay kontrolü
-    if (!formData.kvkkConsent) {
-      warnings.push('KVKK aydınlatma metni onayı gereklidir');
-    }
-    
-    setSecurityWarnings(warnings);
-    return formData.kvkkConsent; // Sadece KVKK onayı yeterli
-  };
-
-  // 2FA kod gönderme
-  const send2FACode = async () => {
-    try {
-      // API call to send 2FA code
-      setShow2FA(true);
-    } catch (error) {
-      console.error('2FA kod gönderme hatası:', error);
-    }
-  };
-
-  // Login form submit
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!performSecurityCheck()) {
-      return;
-    }
-
-    if (isBlocked) {
-      alert(`Hesabınız ${Math.ceil(blockTimeRemaining / 60)} dakika boyunca bloke edilmiştir.`);
-      return;
-    }
-
-    try {
-      await login({
-        identifier: formData.identifier,
-        password: formData.password,
-        twoFactorCode: formData.twoFactorCode,
-        branch: formData.selectedBranch,
-        language: formData.language,
-        loginType
-      });
-    } catch (error) {
-      setAttemptCount(prev => prev + 1);
+  const renderLeadAssignment = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Otomatik Lead Atama Kuralları</h3>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h4 className="font-medium text-blue-900 mb-2">Otomatik Lead Dağıtımı</h4>
+          <p className="text-sm text-blue-700">
+            Gelen lead'ler belirlenen kurallara göre otomatik olarak satış temsilcilerine atanır
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Atama Yöntemi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled>
+              <option value="round-robin" selected>Sıralı Dağıtım (Round Robin)</option>
+              <option value="workload">İş Yükü Bazlı</option>
+              <option value="performance">Performans Bazlı</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Sistem otomatik olarak lead'leri sırayla temsilcilere atar.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Maksimum Lead/Temsilci
+            </label>
+            <input
+              type="number"
+              defaultValue="50"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+      </div>
       
-      // 5 başarısız denemeden sonra 30 dakika bloke
-      if (attemptCount >= 4) {
-        setIsBlocked(true);
-        setBlockTimeRemaining(30 * 60); // 30 dakika
-      }
-    }
-  };
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Otomatik Atama KPI Metrikleri</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Dönüşüm Hedefi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="25"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">% dönüşüm oranı</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Yanıt Süresi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="30"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">dakika içinde</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Takip Sıklığı</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="3"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">gün arayla</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-  // Bloke süresi sayacı
-  useEffect(() => {
-    if (isBlocked && blockTimeRemaining > 0) {
-      const timer = setInterval(() => {
-        setBlockTimeRemaining(prev => {
-          if (prev <= 1) {
-            setIsBlocked(false);
-            setAttemptCount(0);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+  const renderIntegrations = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Harici Entegrasyonlar</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">WhatsApp Business API</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Hasta iletişimi ve otomatik mesajlaşma</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="API Token"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Telefon Numarası"
+                defaultValue="+90 555 123 45 67"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Meta Ads (Facebook/Instagram)</h4>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Beklemede</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Lead generation ve reklam yönetimi</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="App ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="App Secret"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">PayTR Ödeme Gateway</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Online ödeme işlemleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Merchant ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Merchant Key"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Google Analytics</h4>
+              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Pasif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Web sitesi analitikleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Tracking ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Property ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderClinicManagement = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Klinik Yapı Ayarları</h3>
+        
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium text-blue-900">Çoklu Şube Sistemi</h4>
+              <p className="text-sm text-blue-700 mt-1">
+                {branchSettings.isMultiBranch 
+                  ? 'Sistem şu anda çoklu şube modunda çalışıyor'
+                  : 'Sistem şu anda tek şube modunda çalışıyor'
+                }
+              </p>
+            </div>
+            <button
+              onClick={toggleMultiBranch}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                branchSettings.isMultiBranch ? 'bg-blue-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  branchSettings.isMultiBranch ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Tek Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Basit yönetim ve kurulum</li>
+              <li>• Düşük maliyet</li>
+              <li>• Hızlı başlangıç</li>
+              <li>• Küçük-orta klinikler için ideal</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Çoklu Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Ölçeklenebilir yapı</li>
+              <li>• Şube bazlı raporlama</li>
+              <li>• Merkezi yönetim</li>
+              <li>• Büyük hastane zincirleri için</li>
+            </ul>
+          </div>
+        </div>
+
+        {branchSettings.isMultiBranch && (
+          <div className="mt-6">
+            <h4 className="font-medium text-gray-900 mb-3">Mevcut Şubeler ({branches.length})</h4>
+            <div className="space-y-2">
+              {branches.map(branch => (
+                <div key={branch.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-gray-900">{branch.name}</span>
+                    <span className="text-sm text-gray-500 ml-2">{branch.address}</span>
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    branch.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {branch.isActive ? 'Aktif' : 'Pasif'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderReportsAndAnalytics = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Analitik & Raporlar</h3>
+        <p className="text-gray-600 mb-6">Sistem performansı, hasta verileri ve iş zekası raporları</p>
+      </div>
+
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Toplam Hasta</p>
+              <p className="text-3xl font-bold text-blue-600">2,847</p>
+            </div>
+            <Users className="h-8 w-8 text-blue-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+12% bu ay</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aylık Gelir</p>
+              <p className="text-3xl font-bold text-green-600">₺18.2M</p>
+            </div>
+            <CreditCard className="h-8 w-8 text-green-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+23% geçen aya göre</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Dönüşüm Oranı</p>
+              <p className="text-3xl font-bold text-purple-600">68%</p>
+            </div>
+            <BarChart3 className="h-8 w-8 text-purple-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+5% artış</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aktif Tedavi</p>
+              <p className="text-3xl font-bold text-orange-600">156</p>
+            </div>
+            <FileText className="h-8 w-8 text-orange-600" />
+          </div>
+          <p className="text-sm text-blue-600 mt-2">Bu hafta</p>
+        </div>
+      </div>
+
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Aylık Gelir Trendi</h4>
+          <div className="h-64 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <BarChart3 className="h-12 w-12 text-blue-500 mx-auto mb-3" />
+              <p className="text-gray-600">Gelir grafiği burada görünecek</p>
+              <p className="text-sm text-gray-500">Chart.js entegrasyonu ile</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Patient Distribution */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Hasta Dağılımı</h4>
+          <div className="space-y-4">
+            {[
+              { country: 'Türkiye', patients: 1247, percentage: 44, color: 'bg-red-500' },
+              { country: 'İspanya', patients: 589, percentage: 21, color: 'bg-yellow-500' },
+              { country: 'İngiltere', patients: 423, percentage: 15, color: 'bg-blue-500' },
+              { country: 'Almanya', patients: 356, percentage: 12, color: 'bg-black' },
+              { country: 'Diğer', patients: 232, percentage: 8, color: 'bg-gray-400' }
+            ].map((item, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+                  <span className="text-sm font-medium text-gray-900">{item.country}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${item.color}`}
+                      style={{ width: `${item.percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-gray-600 w-12 text-right">{item.patients}</span>
+                  <span className="text-sm text-gray-500 w-8 text-right">%{item.percentage}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Treatment Analytics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Tedavi Kategorileri Performansı</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Kardiyoloji', patients: 456, revenue: '₺6.7M', growth: '+15%', color: 'text-red-600 bg-red-50' },
+            { name: 'Ortopedi', patients: 389, revenue: '₺5.4M', growth: '+8%', color: 'text-blue-600 bg-blue-50' },
+            { name: 'Onkoloji', patients: 234, revenue: '₺9.1M', growth: '+22%', color: 'text-purple-600 bg-purple-50' },
+            { name: 'Plastik Cerrahi', patients: 567, revenue: '₺4.2M', growth: '+12%', color: 'text-pink-600 bg-pink-50' }
+          ].map((treatment, index) => (
+            <div key={index} className={`p-4 rounded-lg ${treatment.color}`}>
+              <h5 className="font-semibold mb-2">{treatment.name}</h5>
+              <div className="space-y-1 text-sm">
+                <p><span className="font-medium">Hasta:</span> {treatment.patients}</p>
+                <p><span className="font-medium">Gelir:</span> {treatment.revenue}</p>
+                <p><span className="font-medium">Büyüme:</span> {treatment.growth}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Report Generation */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Rapor Oluşturma</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Finansal Rapor</h5>
+            <p className="text-sm text-gray-600 mb-3">Gelir, gider ve karlılık analizi</p>
+            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Hasta Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">Hasta demografisi ve tedavi istatistikleri</p>
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Performans Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">KPI'lar ve hedef karşılaştırması</p>
+            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Real-time Metrics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Gerçek Zamanlı Metrikler</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-green-800">Bugünkü Randevular</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-green-700">24</p>
+            <p className="text-xs text-green-600">+3 son 1 saatte</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-blue-800">Aktif Kullanıcılar</span>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-blue-700">47</p>
+            <p className="text-xs text-blue-600">Online şu anda</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-purple-800">Yeni Lead'ler</span>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-purple-700">12</p>
+            <p className="text-xs text-purple-600">Bugün gelen</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-orange-800">Sistem Durumu</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <p className="text-2xl font-bold text-orange-700">99.9%</p>
+            <p className="text-xs text-orange-600">Uptime</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Export Options */}
+      <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Veri Dışa Aktarma</h4>
+        <div className="flex flex-wrap gap-3">
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>Excel (.xlsx)</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>PDF Raporu</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <Database className="h-4 w-4" />
+            <span>CSV Verisi</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <BarChart3 className="h-4 w-4" />
+            <span>Dashboard PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPlaceholderContent = (title: string) => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      {title !== 'E-Posta Ayarları' ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-sm text-yellow-800">
+            {title} modülü geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.
+          </p>
+        </div>
+      ) : renderEmailSettings()}
+    </div>
+  );
+
+  const renderEmailSettings = () => (
+    <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center space-x-2 mb-2">
+          <Mail className="h-5 w-5 text-blue-600" />
+          <h4 className="font-medium text-blue-900">SMTP Ayarları</h4>
+        </div>
+        <p className="text-sm text-blue-700">
+          Bu ayarlar, sistem tarafından gönderilen e-postaların yapılandırmasını belirler. Kullanıcı bildirimleri, şifre sıfırlama ve otomatik e-postalar için kullanılır.
+        </p>
+      </div>
       
-      return () => clearInterval(timer);
-    }
-  }, [isBlocked, blockTimeRemaining]);
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Sunucu
+          </label>
+          <input
+            type="text"
+            defaultValue="smtp.gmail.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Port
+          </label>
+          <input
+            type="number"
+            defaultValue="587"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            E-posta Adresi
+          </label>
+          <input
+            type="email"
+            defaultValue="no-reply@duendehealthcrm.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Şifre
+          </label>
+          <div className="relative">
+            <input
+              type="password"
+              defaultValue="••••••••"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+              <Eye className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Gönderen Adı
+          </label>
+          <input
+            type="text"
+            defaultValue="Duende Health CRM"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SSL/TLS
+          </label>
+          <select
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            defaultValue="tls"
+          >
+            <option value="none">Yok</option>
+            <option value="ssl">SSL</option>
+            <option value="tls">TLS</option>
+          </select>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">E-posta Bildirimleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Yeni Kullanıcı Bildirimi</h5>
+              <p className="text-sm text-gray-600">Yeni kullanıcı oluşturulduğunda hoş geldiniz e-postası</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Şifre Sıfırlama</h5>
+              <p className="text-sm text-gray-600">Şifre sıfırlama bağlantıları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Güvenlik Uyarıları</h5>
+              <p className="text-sm text-gray-600">Şüpheli giriş denemeleri ve güvenlik olayları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Test ve Doğrulama</h4>
+        <div className="flex space-x-3">
+          <input
+            type="email"
+            placeholder="Test e-postası gönderilecek adres"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Test E-postası Gönder
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          İptal
+        </button>
+        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          Ayarları Kaydet
+        </button>
+      </div>
+    </div>
+  );
 
-  // Placeholder metni
-  const getPlaceholder = () => {
-    switch (loginType) {
-      case 'email': return t('login.emailPlaceholder');
-      case 'phone': return 'Telefon numaranız';
-      case 'username': return t('login.username');
-      default: return 'E-posta, telefon veya kullanıcı adı';
-    }
-  };
-
-  // Icon seçimi
-  const getInputIcon = () => {
-    switch (loginType) {
-      case 'email': return <Mail className="h-5 w-5 text-gray-400" />;
-      case 'phone': return <Phone className="h-5 w-5 text-gray-400" />;
-      case 'username': return <User className="h-5 w-5 text-gray-400" />;
-      default: return <User className="h-5 w-5 text-gray-400" />;
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'general':
+        return renderGeneralSettings();
+      case 'lead-assignment':
+        return renderLeadAssignment();
+      case 'integrations':
+        return renderIntegrations();
+      case 'clinic':
+        return renderClinicManagement();
+      case 'roles':
+        return <RolePermissionManagement />;
+      case 'legal-security':
+        return <LegalSecurityCompliance />;
+      case 'ai-automation':
+        return <AIAutomationImprovement />;
+      case 'users':
+        return <UserManagement />;
+      case 'inventory':
+        return <InventoryManagement />;
+      case 'payments':
+        return <PaymentManagement />;
+      case 'patient-portal':
+        return <PatientPortal />;
+      case 'data-management':
+        return <DataExportImport />;
+      case 'reports':
+        return renderReportsAndAnalytics();
+      case 'notifications':
+        return renderPlaceholderContent('Bildirim Ayarları'); 
+      case 'language':
+        return renderPlaceholderContent('Dil Ayarları');
+      case 'email':
+        return <EmailSettings />;
+      case 'payment':
+        return renderPlaceholderContent('Ödeme Ayarları');
+      case 'templates':
+        return renderPlaceholderContent('Belge Şablonları');
+      case 'help':
+        return renderPlaceholderContent('Yardım ve Destek');
+      default:
+        return renderGeneralSettings();
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-8">
-        {/* Logo ve Başlık */}
-        <div className="text-center">
-          <div className="flex justify-center mb-6">
-            <div className="relative">
-              <img 
-                src="/icon_health.png" 
-                alt="Health Icon" 
-                className="h-20 w-20 object-contain"
-              />
-            </div>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 p-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-3 p-4 rounded-lg text-left transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                <tab.icon className="h-5 w-5 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{tab.label}</p>
+                  <p className="text-xs text-gray-500 truncate">{tab.description}</p>
+                </div>
+              </button>
+            ))}
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">{t('login.title')}</h1>
-          <p className="text-gray-600 mt-2">{t('login.subtitle')}</p>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {renderContent()}
           
-          {/* Şube Seçimi (Çoklu şube varsa) */}
-          {branchSettings.isMultiBranch && (
-            <div className="mt-4">
-              <select
-                value={formData.selectedBranch}
-                onChange={(e) => handleInputChange('selectedBranch', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm bg-white text-gray-900"
-              >
-                <option value="">Şube Seçiniz</option>
-                {branches.map(branch => (
-                  <option key={branch.id} value={branch.id}>
-                    {branch.name} - {branch.address}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-        </div>
-
-        {/* Login Form */}
-        <div className="bg-white border-gray-100 rounded-2xl shadow-xl p-8 border">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Dil Seçimi */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Languages className="inline h-4 w-4 mr-1 text-gray-600" />
-                {t('login.language')}
-              </label>
-              <Listbox value={formData.language} onChange={(value) => handleInputChange('language', value)}>
-                <div className="relative">
-                  <Listbox.Button className="relative w-full cursor-default rounded-lg border border-gray-300 bg-white py-3 pl-4 pr-10 text-left shadow-sm focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500">
-                    <span className="flex items-center">
-                      <img 
-                        src={currentLanguageData.flag} 
-                        alt={currentLanguageData.name}
-                        className="w-8 h-8 mr-3 object-cover rounded border border-gray-200 shadow-sm"
-                      />
-                      <span className="block truncate text-gray-900">
-                        {currentLanguageData.name}
-                      </span>
-                    </span>
-                    <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                      <ChevronUpDown
-                        className="h-5 w-5 text-gray-400"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Listbox.Button>
-                  <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                      {languageOptions.map((language) => (
-                        <Listbox.Option
-                          key={language.code}
-                          className={({ active }) =>
-                            `relative cursor-default select-none py-2 pl-4 pr-4 ${
-                              active ? 'bg-red-100 text-red-900' : 'text-gray-900'
-                            }`
-                          }
-                          value={language.code}
-                        >
-                          {({ selected }) => (
-                            <div className="flex items-center">
-                              <img 
-                                src={language.flag} 
-                                alt={language.name}
-                                className="w-8 h-8 mr-3 object-cover rounded border border-gray-200 shadow-sm"
-                              />
-                              <span
-                                className={`block truncate ${
-                                  selected ? 'font-medium' : 'font-normal'
-                                }`}
-                              >
-                                {language.name}
-                              </span>
-                              {selected ? (
-                                <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-red-600">
-                                  <Check className="h-5 w-5" aria-hidden="true" />
-                                </span>
-                              ) : null}
-                            </div>
-                          )}
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
-                  </Transition>
-                </div>
-              </Listbox>
-            </div>
-
-            {/* Kullanıcı Girişi */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('login.loginInfo')}
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                  {getInputIcon()}
-                </div>
-                <input
-                  type="text"
-                  value={formData.identifier}
-                  onChange={(e) => handleInputChange('identifier', e.target.value)}
-                  placeholder={getPlaceholder()}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
-                  required
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                E-posta, telefon numarası veya kullanıcı adınızı girebilirsiniz
-              </p>
-            </div>
-
-            {/* Şifre */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('login.password')}
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Şifrenizi girin"
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent ${passwordError ? 'border-yellow-300 bg-yellow-50' : 'border-gray-300 bg-white text-gray-900'}`}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              {passwordError && (
-                <p className="text-xs text-red-600 mt-1">
-                  ⚠️ {passwordError}
-                </p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                Demo şifre: <span className="font-mono bg-gray-100 px-1 rounded">123456</span>
-              </p>
-            </div>
-
-            {/* Demo Bilgiler */}
-            <div className="bg-blue-50 border-blue-200 border rounded-lg p-4">
-              <h3 className="font-medium text-blue-900 mb-2">
-                🔐 {t('login.demoCredentials')}
-              </h3>
-              <div className="space-y-3 text-sm">
-                <div>
-                  <p className="font-medium text-blue-800 mb-2">Kullanıcı Adı / Şifre:</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">admin / 123456</p>
-                      <p className="text-blue-600 text-xs">Sistem Yöneticisi</p>
-                    </div>
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">yonetici / 123456</p>
-                      <p className="text-blue-600 text-xs">Yönetici</p>
-                    </div>
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">mudur / 123456</p>
-                      <p className="text-blue-600 text-xs">Müdür</p>
-                    </div>
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">doktor / 123456</p>
-                      <p className="text-blue-600 text-xs">Doktor</p>
-                    </div>
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">satis / 123456</p>
-                      <p className="text-blue-600 text-xs">Satış Temsilcisi</p>
-                    </div>
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">koordinator / 123456</p>
-                      <p className="text-blue-600 text-xs">Koordinatör</p>
-                    </div>
-                    <div>
-                      <p className="text-blue-700 font-mono text-xs">hasta / 123456</p>
-                      <p className="text-blue-600 text-xs">Hasta</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="border-t border-blue-200 pt-2">
-                  <p className="text-xs text-blue-600">
-                    💡 E-posta ile de giriş yapabilirsiniz: admin@sagliktur.com, doktor@sagliktur.com vb.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* 2FA Kodu (Gerekirse) */}
-            {show2FA && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Shield className="inline h-4 w-4 mr-1" />
-                  İki Faktörlü Doğrulama Kodu
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Key className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={formData.twoFactorCode}
-                    onChange={(e) => handleInputChange('twoFactorCode', e.target.value)}
-                    placeholder="6 haneli kod"
-                    maxLength={6}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent text-center text-lg tracking-widest"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={send2FACode}
-                  className="text-sm text-red-600 hover:text-red-700 mt-1"
-                >
-                  Kodu tekrar gönder
-                </button>
-              </div>
-            )}
-
-            {/* KVKK ve Gizlilik Onayları */}
-            <div className="space-y-3">
-              <div className="flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  id="kvkk"
-                  checked={formData.kvkkConsent}
-                  onChange={(e) => handleInputChange('kvkkConsent', e.target.checked)}
-                  className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                  required
-                />
-                <label htmlFor="kvkk" className="text-sm text-gray-700">
-                  <span className="font-medium text-red-600">*</span> 
-                  {t('login.kvkkConsent')}
-                </label>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <input
-                  type="checkbox"
-                  id="privacy"
-                  checked={formData.privacyConsent}
-                  onChange={(e) => handleInputChange('privacyConsent', e.target.checked)}
-                  className="mt-1 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
-                />
-                <label htmlFor="privacy" className="text-sm text-gray-700">
-                  {t('login.marketingConsent')}
-                </label>
-              </div>
-            </div>
-
-            {/* Güvenlik Uyarıları */}
-            {securityWarnings.length > 0 && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                  <span className="font-medium text-red-800">Güvenlik Uyarıları</span>
-                </div>
-                <ul className="text-sm text-red-700 space-y-1">
-                  {securityWarnings.map((warning, index) => (
-                    <li key={index}>• {warning}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Hata Mesajı */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                  <span className="text-sm text-red-800">{error}</span>
-                </div>
-              </div>
-            )}
-
-            {/* Bloke Uyarısı */}
-            {isBlocked && (
-              <div className="bg-red-100 border border-red-300 rounded-lg p-4">
-                <div className="flex items-center">
-                  <Shield className="h-5 w-5 text-red-600 mr-2" />
-                  <div>
-                    <span className="font-medium text-red-800">Hesap Geçici Olarak Bloke Edildi</span>
-                    <p className="text-sm text-red-700 mt-1">
-                      Kalan süre: {Math.floor(blockTimeRemaining / 60)}:{(blockTimeRemaining % 60).toString().padStart(2, '0')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Giriş Butonu */}
-            <button
-              type="submit"
-              disabled={isLoading || isBlocked || !formData.kvkkConsent || !formData.identifier || !formData.password}
-              className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>{t('login.loggingIn')}</span>
-                </>
-              ) : (
-                <>
-                  <Shield className="h-5 w-5" />
-                  <span>{t('login.login')}</span>
-                </>
-              )}
-            </button>
-
-            {/* Şifre Sıfırlama */}
-            <div className="text-center">
-              <a
-                href="/reset-password"
-                className="text-sm text-red-600 hover:text-red-700 underline"
-              >
-                {t('login.forgotPassword')}
-              </a>
-            </div>
-          </form>
-        </div>
-
-        {/* Rol Bazlı Açıklama */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-center mb-2">
-            <User className="h-5 w-5 text-blue-600 mr-2" />
-            <span className="font-medium text-blue-800">{t('login.accessInfo')}</span>
-          </div>
-          <p className="text-sm text-blue-700">{t('login.securityInfo')}</p>
-        </div>
-
-        {/* Güvenlik Bilgileri */}
-        <div className="text-center text-xs text-gray-500 space-y-1">
-          <p>🔒 {t('login.security.ssl')}</p>
-          <p>🛡️ {t('login.security.compliance')}</p>
-          <p>📱 {t('login.security.mfa')}</p>
-          <p className="mt-2">© 2025 Duende Health CRM v1.0.1. Tüm hakları saklıdır.</p>
+          {/* Save Button */}
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Settings;

@@ -17,19 +17,10 @@ import {
   Zap,
   Bot,
   Package,
-  Handshake
+  Handshake,
+  Eye
 } from 'lucide-react';
-import { useBranch } from '../contexts/BranchContext';
-import RolePermissionManagement from './RolePermissionManagement';
-import LegalSecurityCompliance from './LegalSecurityCompliance';
-import EmailSettings from '../components/settings/EmailSettings';
-import AIAutomationImprovement from './AIAutomationImprovement';
-import UserManagement from './UserManagement';
-import InventoryManagement from './InventoryManagement';
-import PartnerManagement from './PartnerManagement';
-import PaymentManagement from './PaymentManagement';
-import PatientPortal from './PatientPortal';
-import DataExportImport from '../components/common/DataExportImport';
+import { useBranch } from './contexts/BranchContext';
 
 const Settings = () => {
   const { t } = useTranslation();

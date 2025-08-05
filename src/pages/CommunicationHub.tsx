@@ -1,687 +1,836 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
-  MessageCircle, 
+  Settings as SettingsIcon, 
+  Building2, 
   Users, 
-  Search, 
-  Filter, 
-  Plus, 
-  Send, 
-  Paperclip, 
-  Smile, 
-  Phone, 
-  Video, 
-  MoreHorizontal,
-  ChevronLeft,
-  ChevronRight,
-  Image,
-  File,
-  Mic,
-  Clock,
-  CheckCircle,
-  User,
-  Mail,
+  Shield, 
+  Database, 
+  Bell,
   Globe,
-  Calendar,
-  Star,
-  Flag,
-  Tag,
-  Bookmark,
-  Settings,
-  RefreshCw,
-  Trash2,
-  Archive,
-  AlertTriangle,
-  Info,
+  Mail,
+  CreditCard,
+  FileText,
+  BarChart3,
   HelpCircle,
-  MessageSquare,
-  PhoneCall
+  UserPlus,
+  Zap,
+  Bot,
+  Package,
+  Handshake
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import { getConversations, getConversationHistory, sendMessage } from '../services/communicationService';
+import { useBranch } from '../contexts/BranchContext';
+import RolePermissionManagement from './RolePermissionManagement';
+import LegalSecurityCompliance from './LegalSecurityCompliance';
+import EmailSettings from '../components/settings/EmailSettings';
+import AIAutomationImprovement from './AIAutomationImprovement';
+import UserManagement from './UserManagement';
+import InventoryManagement from './InventoryManagement';
+import PartnerManagement from './PartnerManagement';
+import PaymentManagement from './PaymentManagement';
+import PatientPortal from './PatientPortal';
+import DataExportImport from '../components/common/DataExportImport';
 
-const CommunicationHub = () => {
-  const { user } = useAuth();
-  const location = useLocation();
-  const [searchParams] = useSearchParams();
-  
-  // State for conversations and messages
-  const [activeTab, setActiveTab] = useState('conversations');
-  const [conversations, setConversations] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
-  const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [attachments, setAttachments] = useState([]);
-  const [selectedChannel, setSelectedChannel] = useState('whatsapp');
-  
-  // Check for navigation state or URL parameters
-  useEffect(() => {
-    // Check if we have a selected conversation from navigation state
-    const stateData = location.state;
-    const recipientId = searchParams.get('recipient');
-    const recipientType = searchParams.get('type');
-    
-    if (stateData?.selectedConversation || recipientId) {
-      console.log('Received conversation data:', stateData || { recipientId, recipientType });
+const Settings = () => {
+  const { t } = useTranslation();
+  const { branchSettings, toggleMultiBranch, branches } = useBranch();
+  const [activeTab, setActiveTab] = useState('general');
+
+  const tabs = [
+    { id: 'general', label: t('settings.generalSettings'), icon: SettingsIcon, description: 'Sistem genel ayarları ve tercihler' },
+    { id: 'lead-assignment', label: t('settings.leadAssignment'), icon: UserPlus, description: 'Lead atama kuralları ve KPI metrikleri' },
+    { id: 'integrations', label: t('settings.integrations'), icon: Zap, description: 'Harici servisler ve API entegrasyonları' },
+    { id: 'roles', label: t('settings.roles'), icon: Shield, description: 'Kullanıcı rolleri ve yetkilendirme' },
+    { id: 'users', label: t('settings.users'), icon: Users, description: 'Kullanıcı hesapları ve erişim kontrolü' },
+    { id: 'notifications', label: t('settings.notifications'), icon: Bell, description: 'Sistem bildirimleri ve hatırlatıcılar' },
+    { id: 'language', label: t('settings.language'), icon: Globe, description: 'Dil, para birimi ve bölge ayarları' },
+    { id: 'email', label: t('settings.email'), icon: Mail, description: 'SMTP yapılandırması ve şablonlar' },
+    { id: 'clinic', label: t('settings.clinic'), icon: Building2, description: 'Klinik ve şube bilgileri' },
+    { id: 'payment', label: t('settings.payment'), icon: CreditCard, description: 'Ödeme yöntemleri ve gateway yapılandırması' },
+    { id: 'templates', label: t('settings.templates'), icon: FileText, description: 'Sözleşme ve form şablonları' },
+    { id: 'reports', label: t('settings.reports'), icon: BarChart3, description: 'Raporlama ve analiz yapılandırması' },
+    { id: 'legal-security', label: t('settings.legalSecurity'), icon: Shield, description: 'KVKK/GDPR uyumu ve güvenlik politikaları' },
+    { id: 'ai-automation', label: t('settings.aiAutomation'), icon: Bot, description: 'Yapay zeka ve otomasyon ayarları' },
+    { id: 'data-management', label: t('settings.dataManagement'), icon: Database, description: 'LocalStorage veri yönetimi ve yedekleme' },
+    { id: 'help', label: t('Even though your project is already optimized, it's now too big to handle. Try using a <code>.bolt/ignore</code> file or splitting your project into smaller parts. Need help? You'll find all the steps below.
+  ];
+
+  const renderGeneralSettings = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Genel Sistem Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sistem Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur CRM"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Şirket Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur Medikal"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Zaman Dilimi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="Europe/Istanbul">Türkiye (UTC+3)</option>
+              <option value="Europe/London">Londra (UTC+0)</option>
+              <option value="Asia/Dubai">Dubai (UTC+4)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tarih Formatı
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            </select>
+          </div>
+        </div>
+      </div>
       
-      // Set the selected conversation
-      const conversationId = stateData?.selectedConversation || recipientId;
-      const convType = stateData?.recipientType || recipientType || 'lead';
-      const contactInfo = stateData?.contactInfo || {};
-      
-      // Find the conversation in the list or create a new one
-      const existingConversation = conversations.find(c => 
-        c.recipient_id === conversationId && c.recipient_type === convType
-      );
-      
-      if (existingConversation) {
-        setSelectedConversation(existingConversation);
-        loadMessages(existingConversation.id);
-      } else {
-        // Create a temporary conversation object
-        const newConversation = {
-          id: `temp_${Date.now()}`,
-          recipient_id: conversationId,
-          recipient_type: convType,
-          recipient_name: `${convType.charAt(0).toUpperCase() + convType.slice(1)} #${conversationId}`,
-          last_message: '',
-          last_message_time: new Date().toISOString(),
-          unread_count: 0,
-          channel: contactInfo.whatsapp ? 'whatsapp' : 
-                  contactInfo.phone ? 'sms' : 
-                  contactInfo.email ? 'email' : 'chat',
-          status: 'active',
-          contactInfo
-        };
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Sistem Tercihleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Otomatik Yedekleme</h5>
+              <p className="text-sm text-gray-600">Günlük otomatik veri yedeklemesi</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Gelişmiş Güvenlik</h5>
+              <p className="text-sm text-gray-600">İki faktörlü kimlik doğrulama</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderLeadAssignment = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Otomatik Lead Atama Kuralları</h3>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h4 className="font-medium text-blue-900 mb-2">Otomatik Lead Dağıtımı</h4>
+          <p className="text-sm text-blue-700">
+            Gelen lead'ler belirlenen kurallara göre otomatik olarak satış temsilcilerine atanır
+          </p>
+        </div>
         
-        setSelectedConversation(newConversation);
-        // No messages to load yet for a new conversation
-        setMessages([]);
-      }
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Atama Yöntemi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled>
+              <option value="round-robin" selected>Sıralı Dağıtım (Round Robin)</option>
+              <option value="workload">İş Yükü Bazlı</option>
+              <option value="performance">Performans Bazlı</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Sistem otomatik olarak lead'leri sırayla temsilcilere atar.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Maksimum Lead/Temsilci
+            </label>
+            <input
+              type="number"
+              defaultValue="50"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+      </div>
       
-      // Switch to conversations tab
-      setActiveTab('conversations');
-    }
-  }, [location, searchParams, conversations]);
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Otomatik Atama KPI Metrikleri</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Dönüşüm Hedefi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="25"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">% dönüşüm oranı</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Yanıt Süresi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="30"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">dakika içinde</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Takip Sıklığı</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="3"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">gün arayla</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-  // Load conversations on component mount
-  useEffect(() => {
-    loadConversations();
-  }, [filter]);
-
-  // Load messages when a conversation is selected
-  useEffect(() => {
-    if (selectedConversation?.id && !selectedConversation.id.startsWith('temp_')) {
-      loadMessages(selectedConversation.id);
-    }
-  }, [selectedConversation]);
-
-  // Scroll to bottom of messages when messages change
-  useEffect(() => {
-    const messagesContainer = document.getElementById('messages-container');
-    if (messagesContainer) {
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-  }, [messages]);
-
-  // Load conversations
-  const loadConversations = async () => {
-    setIsLoading(true);
-    try {
-      const result = await getConversations({ filter });
-      if (result.success) {
-        setConversations(result.conversations);
-      }
-    } catch (error) {
-      console.error('Error loading conversations:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Load messages for a conversation
-  const loadMessages = async (conversationId) => {
-    setIsLoading(true);
-    try {
-      const result = await getConversationHistory({
-        recipientId: selectedConversation.recipient_id,
-        recipientType: selectedConversation.recipient_type
-      });
-      
-      if (result.success) {
-        setMessages(result.messages);
-      }
-    } catch (error) {
-      console.error('Error loading messages:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Send a message
-  const handleSendMessage = async () => {
-    if (!newMessage.trim() && attachments.length === 0) return;
-    
-    try {
-      const result = await sendMessage({
-        recipientId: selectedConversation.recipient_id,
-        recipientType: selectedConversation.recipient_type,
-        channel: selectedChannel,
-        message: newMessage,
-        attachments
-      });
-      
-      if (result.success) {
-        // Add the message to the list
-        setMessages(prev => [...prev, {
-          id: result.messageId,
-          content: newMessage,
-          sender: 'user',
-          timestamp: new Date().toISOString(),
-          status: 'sent',
-          channel: selectedChannel
-        }]);
+  const renderIntegrations = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Harici Entegrasyonlar</h3>
         
-        // Clear the input
-        setNewMessage('');
-        setAttachments([]);
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">WhatsApp Business API</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Hasta iletişimi ve otomatik mesajlaşma</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="API Token"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Telefon Numarası"
+                defaultValue="+90 555 123 45 67"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Meta Ads (Facebook/Instagram)</h4>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Beklemede</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Lead generation ve reklam yönetimi</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="App ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="App Secret"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">PayTR Ödeme Gateway</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Online ödeme işlemleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Merchant ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Merchant Key"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Google Analytics</h4>
+              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Pasif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Web sitesi analitikleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Tracking ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Property ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderClinicManagement = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Klinik Yapı Ayarları</h3>
         
-        // Refresh conversations to update the last message
-        loadConversations();
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  };
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium text-blue-900">Çoklu Şube Sistemi</h4>
+              <p className="text-sm text-blue-700 mt-1">
+                {branchSettings.isMultiBranch 
+                  ? 'Sistem şu anda çoklu şube modunda çalışıyor'
+                  : 'Sistem şu anda tek şube modunda çalışıyor'
+                }
+              </p>
+            </div>
+            <button
+              onClick={toggleMultiBranch}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                branchSettings.isMultiBranch ? 'bg-blue-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  branchSettings.isMultiBranch ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
 
-  // Handle file upload
-  const handleFileUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setAttachments(prev => [...prev, ...files]);
-  };
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Tek Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Basit yönetim ve kurulum</li>
+              <li>• Düşük maliyet</li>
+              <li>• Hızlı başlangıç</li>
+              <li>• Küçük-orta klinikler için ideal</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Çoklu Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Ölçeklenebilir yapı</li>
+              <li>• Şube bazlı raporlama</li>
+              <li>• Merkezi yönetim</li>
+              <li>• Büyük hastane zincirleri için</li>
+            </ul>
+          </div>
+        </div>
 
-  // Remove an attachment
-  const handleRemoveAttachment = (index) => {
-    setAttachments(prev => prev.filter((_, i) => i !== index));
-  };
+        {branchSettings.isMultiBranch && (
+          <div className="mt-6">
+            <h4 className="font-medium text-gray-900 mb-3">Mevcut Şubeler ({branches.length})</h4>
+            <div className="space-y-2">
+              {branches.map(branch => (
+                <div key={branch.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-gray-900">{branch.name}</span>
+                    <span className="text-sm text-gray-500 ml-2">{branch.address}</span>
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    branch.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {branch.isActive ? 'Aktif' : 'Pasif'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
-  // Filter conversations
-  const filteredConversations = conversations.filter(conversation => {
-    const matchesSearch = conversation.recipient_name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === 'all' || 
-                         (filter === 'unread' && conversation.unread_count > 0) ||
-                         filter === conversation.recipient_type;
-    
-    return matchesSearch && matchesFilter;
-  });
+  const renderReportsAndAnalytics = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Analitik & Raporlar</h3>
+        <p className="text-gray-600 mb-6">Sistem performansı, hasta verileri ve iş zekası raporları</p>
+      </div>
 
-  // Get channel icon
-  const getChannelIcon = (channel) => {
-    switch (channel) {
-      case 'whatsapp': return <MessageSquare className="h-4 w-4 text-green-600" />;
-      case 'sms': return <MessageCircle className="h-4 w-4 text-blue-600" />;
-      case 'email': return <Mail className="h-4 w-4 text-purple-600" />;
-      case 'chat': return <MessageCircle className="h-4 w-4 text-gray-600" />;
-      default: return <MessageCircle className="h-4 w-4 text-gray-600" />;
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Toplam Hasta</p>
+              <p className="text-3xl font-bold text-blue-600">2,847</p>
+            </div>
+            <Users className="h-8 w-8 text-blue-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+12% bu ay</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aylık Gelir</p>
+              <p className="text-3xl font-bold text-green-600">₺18.2M</p>
+            </div>
+            <CreditCard className="h-8 w-8 text-green-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+23% geçen aya göre</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Dönüşüm Oranı</p>
+              <p className="text-3xl font-bold text-purple-600">68%</p>
+            </div>
+            <BarChart3 className="h-8 w-8 text-purple-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+5% artış</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aktif Tedavi</p>
+              <p className="text-3xl font-bold text-orange-600">156</p>
+            </div>
+            <FileText className="h-8 w-8 text-orange-600" />
+          </div>
+          <p className="text-sm text-blue-600 mt-2">Bu hafta</p>
+        </div>
+      </div>
+
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Aylık Gelir Trendi</h4>
+          <div className="h-64 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <BarChart3 className="h-12 w-12 text-blue-500 mx-auto mb-3" />
+              <p className="text-gray-600">Gelir grafiği burada görünecek</p>
+              <p className="text-sm text-gray-500">Chart.js entegrasyonu ile</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Patient Distribution */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Hasta Dağılımı</h4>
+          <div className="space-y-4">
+            {[
+              { country: 'Türkiye', patients: 1247, percentage: 44, color: 'bg-red-500' },
+              { country: 'İspanya', patients: 589, percentage: 21, color: 'bg-yellow-500' },
+              { country: 'İngiltere', patients: 423, percentage: 15, color: 'bg-blue-500' },
+              { country: 'Almanya', patients: 356, percentage: 12, color: 'bg-black' },
+              { country: 'Diğer', patients: 232, percentage: 8, color: 'bg-gray-400' }
+            ].map((item, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+                  <span className="text-sm font-medium text-gray-900">{item.country}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${item.color}`}
+                      style={{ width: `${item.percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-gray-600 w-12 text-right">{item.patients}</span>
+                  <span className="text-sm text-gray-500 w-8 text-right">%{item.percentage}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Treatment Analytics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Tedavi Kategorileri Performansı</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Kardiyoloji', patients: 456, revenue: '₺6.7M', growth: '+15%', color: 'text-red-600 bg-red-50' },
+            { name: 'Ortopedi', patients: 389, revenue: '₺5.4M', growth: '+8%', color: 'text-blue-600 bg-blue-50' },
+            { name: 'Onkoloji', patients: 234, revenue: '₺9.1M', growth: '+22%', color: 'text-purple-600 bg-purple-50' },
+            { name: 'Plastik Cerrahi', patients: 567, revenue: '₺4.2M', growth: '+12%', color: 'text-pink-600 bg-pink-50' }
+          ].map((treatment, index) => (
+            <div key={index} className={`p-4 rounded-lg ${treatment.color}`}>
+              <h5 className="font-semibold mb-2">{treatment.name}</h5>
+              <div className="space-y-1 text-sm">
+                <p><span className="font-medium">Hasta:</span> {treatment.patients}</p>
+                <p><span className="font-medium">Gelir:</span> {treatment.revenue}</p>
+                <p><span className="font-medium">Büyüme:</span> {treatment.growth}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Report Generation */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Rapor Oluşturma</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Finansal Rapor</h5>
+            <p className="text-sm text-gray-600 mb-3">Gelir, gider ve karlılık analizi</p>
+            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Hasta Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">Hasta demografisi ve tedavi istatistikleri</p>
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Performans Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">KPI'lar ve hedef karşılaştırması</p>
+            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Real-time Metrics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Gerçek Zamanlı Metrikler</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-green-800">Bugünkü Randevular</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-green-700">24</p>
+            <p className="text-xs text-green-600">+3 son 1 saatte</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-blue-800">Aktif Kullanıcılar</span>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-blue-700">47</p>
+            <p className="text-xs text-blue-600">Online şu anda</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-purple-800">Yeni Lead'ler</span>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-purple-700">12</p>
+            <p className="text-xs text-purple-600">Bugün gelen</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-orange-800">Sistem Durumu</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <p className="text-2xl font-bold text-orange-700">99.9%</p>
+            <p className="text-xs text-orange-600">Uptime</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Export Options */}
+      <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Veri Dışa Aktarma</h4>
+        <div className="flex flex-wrap gap-3">
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>Excel (.xlsx)</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>PDF Raporu</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <Database className="h-4 w-4" />
+            <span>CSV Verisi</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <BarChart3 className="h-4 w-4" />
+            <span>Dashboard PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPlaceholderContent = (title: string) => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      {title !== 'E-Posta Ayarları' ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-sm text-yellow-800">
+            {title} modülü geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.
+          </p>
+        </div>
+      ) : renderEmailSettings()}
+    </div>
+  );
+
+  const renderEmailSettings = () => (
+    <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center space-x-2 mb-2">
+          <Mail className="h-5 w-5 text-blue-600" />
+          <h4 className="font-medium text-blue-900">SMTP Ayarları</h4>
+        </div>
+        <p className="text-sm text-blue-700">
+          Bu ayarlar, sistem tarafından gönderilen e-postaların yapılandırmasını belirler. Kullanıcı bildirimleri, şifre sıfırlama ve otomatik e-postalar için kullanılır.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Sunucu
+          </label>
+          <input
+            type="text"
+            defaultValue="smtp.gmail.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Port
+          </label>
+          <input
+            type="number"
+            defaultValue="587"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            E-posta Adresi
+          </label>
+          <input
+            type="email"
+            defaultValue="no-reply@duendehealthcrm.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Şifre
+          </label>
+          <div className="relative">
+            <input
+              type="password"
+              defaultValue="••••••••"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+              <Eye className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Gönderen Adı
+          </label>
+          <input
+            type="text"
+            defaultValue="Duende Health CRM"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SSL/TLS
+          </label>
+          <select
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            defaultValue="tls"
+          >
+            <option value="none">Yok</option>
+            <option value="ssl">SSL</option>
+            <option value="tls">TLS</option>
+          </select>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">E-posta Bildirimleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Yeni Kullanıcı Bildirimi</h5>
+              <p className="text-sm text-gray-600">Yeni kullanıcı oluşturulduğunda hoş geldiniz e-postası</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Şifre Sıfırlama</h5>
+              <p className="text-sm text-gray-600">Şifre sıfırlama bağlantıları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Güvenlik Uyarıları</h5>
+              <p className="text-sm text-gray-600">Şüpheli giriş denemeleri ve güvenlik olayları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Test ve Doğrulama</h4>
+        <div className="flex space-x-3">
+          <input
+            type="email"
+            placeholder="Test e-postası gönderilecek adres"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Test E-postası Gönder
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          İptal
+        </button>
+        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          Ayarları Kaydet
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'general':
+        return renderGeneralSettings();
+      case 'lead-assignment':
+        return renderLeadAssignment();
+      case 'integrations':
+        return renderIntegrations();
+      case 'clinic':
+        return renderClinicManagement();
+      case 'roles':
+        return <RolePermissionManagement />;
+      case 'legal-security':
+        return <LegalSecurityCompliance />;
+      case 'ai-automation':
+        return <AIAutomationImprovement />;
+      case 'users':
+        return <UserManagement />;
+      case 'inventory':
+        return <InventoryManagement />;
+      case 'payments':
+        return <PaymentManagement />;
+      case 'patient-portal':
+        return <PatientPortal />;
+      case 'data-management':
+        return <DataExportImport />;
+      case 'reports':
+        return renderReportsAndAnalytics();
+      case 'notifications':
+        return renderPlaceholderContent('Bildirim Ayarları'); 
+      case 'language':
+        return renderPlaceholderContent('Dil Ayarları');
+      case 'email':
+        return <EmailSettings />;
+      case 'payment':
+        return renderPlaceholderContent('Ödeme Ayarları');
+      case 'templates':
+        return renderPlaceholderContent('Belge Şablonları');
+      case 'help':
+        return renderPlaceholderContent('Yardım ve Destek');
+      default:
+        return renderGeneralSettings();
     }
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">İletişim Hub'ı</h1>
-          <p className="text-gray-600 mt-1">Tüm iletişim kanallarını tek yerden yönetin</p>
-        </div>
-        <div className="flex space-x-3">
-          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-            <Plus className="h-4 w-4" />
-            <span>Yeni Mesaj</span>
-          </button>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
       </div>
 
-      {/* Main Content */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="flex h-[calc(80vh-100px)]">
-          {/* Left Sidebar */}
-          <div className="w-1/3 border-r border-gray-200 flex flex-col">
-            {/* Tabs */}
-            <div className="flex border-b border-gray-200">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 p-1">
+            {tabs.map((tab) => (
               <button
-                onClick={() => setActiveTab('conversations')}
-                className={`flex-1 py-4 text-center font-medium text-sm ${
-                  activeTab === 'conversations'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-3 p-4 rounded-lg text-left transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                Konuşmalar
+                <tab.icon className="h-5 w-5 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{tab.label}</p>
+                  <p className="text-xs text-gray-500 truncate">{tab.description}</p>
+                </div>
               </button>
-              <button
-                onClick={() => setActiveTab('contacts')}
-                className={`flex-1 py-4 text-center font-medium text-sm ${
-                  activeTab === 'contacts'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Kişiler
-              </button>
-              <button
-                onClick={() => setActiveTab('templates')}
-                className={`flex-1 py-4 text-center font-medium text-sm ${
-                  activeTab === 'templates'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                Şablonlar
-              </button>
-            </div>
-            
-            {/* Search and Filter */}
-            <div className="p-3 border-b border-gray-200">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Ara..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              
-              <div className="flex mt-2 space-x-2">
-                <button
-                  onClick={() => setFilter('all')}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    filter === 'all'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  Tümü
-                </button>
-                <button
-                  onClick={() => setFilter('unread')}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    filter === 'unread'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  Okunmamış
-                </button>
-                <button
-                  onClick={() => setFilter('lead')}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    filter === 'lead'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  Lead'ler
-                </button>
-                <button
-                  onClick={() => setFilter('patient')}
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    filter === 'patient'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  Hastalar
-                </button>
-              </div>
-            </div>
-            
-            {/* Conversations List */}
-            {activeTab === 'conversations' && (
-              <div className="flex-1 overflow-y-auto">
-                {isLoading && conversations.length === 0 ? (
-                  <div className="flex justify-center items-center h-full">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  </div>
-                ) : filteredConversations.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                    <MessageCircle className="h-12 w-12 text-gray-300 mb-2" />
-                    <p>Henüz konuşma yok</p>
-                    <button className="mt-2 text-blue-600 hover:text-blue-700 text-sm font-medium">
-                      Yeni konuşma başlat
-                    </button>
-                  </div>
-                ) : (
-                  <div className="divide-y divide-gray-200">
-                    {filteredConversations.map((conversation) => (
-                      <div
-                        key={conversation.id}
-                        onClick={() => setSelectedConversation(conversation)}
-                        className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
-                          selectedConversation?.id === conversation.id ? 'bg-blue-50' : ''
-                        }`}
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="relative">
-                            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                              {conversation.recipient_name?.charAt(0) || '?'}
-                            </div>
-                            {conversation.unread_count > 0 && (
-                              <div className="absolute -top-1 -right-1 h-5 w-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                                {conversation.unread_count}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex justify-between items-center">
-                              <h4 className="text-sm font-medium text-gray-900 truncate">
-                                {conversation.recipient_name}
-                              </h4>
-                              <span className="text-xs text-gray-500">
-                                {new Date(conversation.last_message_time).toLocaleTimeString('tr-TR', {
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              {getChannelIcon(conversation.channel)}
-                              <p className="text-sm text-gray-600 truncate">
-                                {conversation.last_message || 'Yeni konuşma'}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* Contacts List */}
-            {activeTab === 'contacts' && (
-              <div className="flex-1 overflow-y-auto">
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  <Users className="h-12 w-12 text-gray-300 mb-2" />
-                  <p>Kişiler listesi yakında eklenecek</p>
-                </div>
-              </div>
-            )}
-            
-            {/* Templates List */}
-            {activeTab === 'templates' && (
-              <div className="flex-1 overflow-y-auto">
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  <MessageSquare className="h-12 w-12 text-gray-300 mb-2" />
-                  <p>Mesaj şablonları yakında eklenecek</p>
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Right Content - Chat */}
-          <div className="w-2/3 flex flex-col">
-            {selectedConversation ? (
-              <>
-                {/* Chat Header */}
-                <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                      {selectedConversation.recipient_name?.charAt(0) || '?'}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {selectedConversation.recipient_name}
-                      </h3>
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
-                        <span className="capitalize">{selectedConversation.recipient_type}</span>
-                        <span>•</span>
-                        <span className="flex items-center space-x-1">
-                          {getChannelIcon(selectedConversation.channel)}
-                          <span className="capitalize">{selectedConversation.channel}</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-                      <Phone className="h-5 w-5" />
-                    </button>
-                    <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-                      <Video className="h-5 w-5" />
-                    </button>
-                    <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-                      <Info className="h-5 w-5" />
-                    </button>
-                    <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-                      <MoreHorizontal className="h-5 w-5" />
-                    </button>
-                  </div>
-                </div>
-                
-                {/* Messages */}
-                <div id="messages-container" className="flex-1 overflow-y-auto p-4 space-y-4">
-                  {messages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                      <MessageCircle className="h-12 w-12 text-gray-300 mb-2" />
-                      <p>Henüz mesaj yok</p>
-                      <p className="text-sm">Aşağıdan ilk mesajınızı gönderebilirsiniz</p>
-                    </div>
-                  ) : (
-                    messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className={`flex ${
-                          message.sender === 'user' ? 'justify-end' : 'justify-start'
-                        }`}
-                      >
-                        <div
-                          className={`max-w-[70%] rounded-lg p-3 ${
-                            message.sender === 'user'
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-100 text-gray-900'
-                          }`}
-                        >
-                          <p>{message.content}</p>
-                          <div
-                            className={`text-xs mt-1 flex items-center justify-end space-x-1 ${
-                              message.sender === 'user' ? 'text-blue-200' : 'text-gray-500'
-                            }`}
-                          >
-                            <span>
-                              {new Date(message.timestamp).toLocaleTimeString('tr-TR', {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                            </span>
-                            {message.sender === 'user' && (
-                              <>
-                                <span>•</span>
-                                {message.status === 'sent' && <Clock className="h-3 w-3" />}
-                                {message.status === 'delivered' && <CheckCircle className="h-3 w-3" />}
-                                {message.status === 'read' && (
-                                  <div className="flex">
-                                    <CheckCircle className="h-3 w-3" />
-                                    <CheckCircle className="h-3 w-3 -ml-1" />
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-                
-                {/* Channel Selection */}
-                <div className="px-4 py-2 border-t border-gray-200 flex items-center space-x-2">
-                  <span className="text-xs text-gray-500">Kanal:</span>
-                  <button
-                    onClick={() => setSelectedChannel('whatsapp')}
-                    className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${
-                      selectedChannel === 'whatsapp'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    <MessageSquare className="h-3 w-3" />
-                    <span>WhatsApp</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedChannel('sms')}
-                    className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${
-                      selectedChannel === 'sms'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    <MessageCircle className="h-3 w-3" />
-                    <span>SMS</span>
-                  </button>
-                  <button
-                    onClick={() => setSelectedChannel('email')}
-                    className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${
-                      selectedChannel === 'email'
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    <Mail className="h-3 w-3" />
-                    <span>E-posta</span>
-                  </button>
-                </div>
-                
-                {/* Message Input */}
-                <div className="p-4 border-t border-gray-200">
-                  {attachments.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {attachments.map((file, index) => (
-                        <div key={index} className="bg-gray-100 rounded-lg p-2 flex items-center space-x-2">
-                          <File className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-700 truncate max-w-[150px]">
-                            {file.name}
-                          </span>
-                          <button
-                            onClick={() => handleRemoveAttachment(index)}
-                            className="text-gray-500 hover:text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <div className="flex items-center space-x-2">
-                    <div className="flex-1 relative">
-                      <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Mesajınızı yazın..."
-                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10"
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                      />
-                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
-                        <button className="text-gray-400 hover:text-gray-600 p-1">
-                          <Smile className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors">
-                        <label htmlFor="file-upload" className="cursor-pointer">
-                          <Paperclip className="h-5 w-5" />
-                          <input
-                            id="file-upload"
-                            type="file"
-                            multiple
-                            className="hidden"
-                            onChange={handleFileUpload}
-                          />
-                        </label>
-                      </button>
-                      <button
-                        onClick={handleSendMessage}
-                        disabled={!newMessage.trim() && attachments.length === 0}
-                        className={`p-3 rounded-full transition-colors ${
-                          !newMessage.trim() && attachments.length === 0
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                            : 'bg-blue-600 text-white hover:bg-blue-700'
-                        }`}
-                      >
-                        <Send className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                <MessageCircle className="h-16 w-16 text-gray-300 mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">İletişim Hub'ına Hoş Geldiniz</h3>
-                <p className="text-center max-w-md mb-4">
-                  Tüm iletişim kanallarınızı tek bir yerden yönetin. Konuşma başlatmak için soldaki listeden bir kişi seçin veya yeni bir mesaj oluşturun.
-                </p>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-                  <Plus className="h-4 w-4" />
-                  <span>Yeni Mesaj</span>
-                </button>
-              </div>
-            )}
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* AI & Automation Features */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-          <MessageCircle className="h-5 w-5 text-blue-600" />
-          <span>Akıllı İletişim Özellikleri</span>
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Otomatik Yanıtlar</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Sık sorulan sorular için hazır yanıtlar</li>
-              <li>• Çalışma saatleri dışında otomatik bilgilendirme</li>
-              <li>• Dil bazlı otomatik yanıt seçimi</li>
-              <li>• Kişiselleştirilmiş şablonlar</li>
-              <li>• AI destekli yanıt önerileri</li>
-            </ul>
-          </div>
+        {/* Content */}
+        <div className="p-6">
+          {renderContent()}
           
-          <div className="bg-white p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Çoklu Kanal Yönetimi</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• WhatsApp Business API entegrasyonu</li>
-              <li>• SMS gateway bağlantısı</li>
-              <li>• E-posta entegrasyonu</li>
-              <li>• Canlı chat widget</li>
-              <li>• Kanal bazlı performans analizi</li>
-            </ul>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">İletişim Analitiği</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Yanıt süreleri ve performans</li>
-              <li>• Kanal bazlı dönüşüm oranları</li>
-              <li>• Mesaj içerik analizi</li>
-              <li>• Duygu analizi ve müşteri memnuniyeti</li>
-              <li>• Ekip performans metrikleri</li>
-            </ul>
-          </div>
+          {/* Save Button */}
         </div>
       </div>
     </div>
   );
 };
 
-export default CommunicationHub;
+export default Settings;

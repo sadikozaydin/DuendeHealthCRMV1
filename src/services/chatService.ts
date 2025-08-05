@@ -1,1498 +1,835 @@
-// 🧭 CRM İçi Kullanıcılar Arası Sohbet Sistemi - Supabase Entegrasyonu
-// localStorage fallback ile hybrid sistem
-import { RealtimeChannel } from '@supabase/supabase-js';
-import { supabase, isSupabaseEnabled } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { 
+  Settings as SettingsIcon, 
+  Building2, 
+  Users, 
+  Shield, 
+  Database, 
+  Bell,
+  Globe,
+  Mail,
+  CreditCard,
+  FileText,
+  BarChart3,
+  HelpCircle,
+  UserPlus,
+  Zap,
+  Bot,
+  Package,
+  Handshake
+} from 'lucide-react';
+import { useBranch } from '../contexts/BranchContext';
+import RolePermissionManagement from './RolePermissionManagement';
+import LegalSecurityCompliance from './LegalSecurityCompliance';
+import EmailSettings from '../components/settings/EmailSettings';
+import AIAutomationImprovement from './AIAutomationImprovement';
+import UserManagement from './UserManagement';
+import InventoryManagement from './InventoryManagement';
+import PartnerManagement from './PartnerManagement';
+import PaymentManagement from './PaymentManagement';
+import PatientPortal from './PatientPortal';
+import DataExportImport from '../components/common/DataExportImport';
 
-// 🚀 Yeni Supabase RPC Fonksiyonları
-export const getOrCreateConversation = async (userId1: string, userId2: string, tenantId: string = 'tenant-001'): Promise<{ success: boolean; data?: { conversation_id: string }; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return getOrCreateConversationFromLocalStorage(userId1, userId2);
-    }
+const Settings = () => {
+  const { t } = useTranslation();
+  const { branchSettings, toggleMultiBranch, branches } = useBranch();
+  const [activeTab, setActiveTab] = useState('general');
 
-    const { data, error } = await supabase.rpc('get_or_create_conversation', {
-      user_id_1: userId1,
-      user_id_2: userId2,
-      tenant_id_input: tenantId
-    });
+  const tabs = [
+    { id: 'general', label: t('settings.generalSettings'), icon: SettingsIcon, description: 'Sistem genel ayarları ve tercihler' },
+    { id: 'lead-assignment', label: t('settings.leadAssignment'), icon: UserPlus, description: 'Lead atama kuralları ve KPI metrikleri' },
+    { id: 'integrations', label: t('settings.integrations'), icon: Zap, description: 'Harici servisler ve API entegrasyonları' },
+    { id: 'roles', label: t('settings.roles'), icon: Shield, description: 'Kullanıcı rolleri ve yetkilendirme' },
+    { id: 'users', label: t('settings.users'), icon: Users, description: 'Kullanıcı hesapları ve erişim kontrolü' },
+    { id: 'notifications', label: t('settings.notifications'), icon: Bell, description: 'Sistem bildirimleri ve hatırlatıcılar' },
+    { id: 'language', label: t('settings.language'), icon: Globe, description: 'Dil, para birimi ve bölge ayarları' },
+    { id: 'email', label: t('settings.email'), icon: Mail, description: 'SMTP yapılandırması ve şablonlar' },
+    { id: 'clinic', label: t('settings.clinic'), icon: Building2, description: 'Klinik ve şube bilgileri' },
+    { id: 'payment', label: t('settings.payment'), icon: CreditCard, description: 'Ödeme yöntemleri ve gateway yapılandırması' },
+    { id: 'templates', label: t('settings.templates'), icon: FileText, description: 'Sözleşme ve form şablonları' },
+    { id: 'reports', label: t('settings.reports'), icon: BarChart3, description: 'Raporlama ve analiz yapılandırması' },
+    { id: 'legal-security', label: t('settings.legalSecurity'), icon: Shield, description: 'KVKK/GDPR uyumu ve güvenlik politikaları' },
+    { id: 'ai-automation', label: t('settings.aiAutomation'), icon: Bot, description: 'Yapay zeka ve otomasyon ayarları' },
+    { id: 'data-management', label: t('settings.dataManagement'), icon: Database, description: 'LocalStorage veri yönetimi ve yedekleme' },
+    { id: 'help', label: t('Even though your project is already optimized, it's now too big to handle. Try using a <code>.bolt/ignore</code> file or splitting your project into smaller parts. Need help? You'll find all the steps below.
+  ];
 
-    if (error) {
-      console.error('Supabase RPC error:', error);
-      return getOrCreateConversationFromLocalStorage(userId1, userId2);
-    }
+  const renderGeneralSettings = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Genel Sistem Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sistem Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur CRM"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Şirket Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur Medikal"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Zaman Dilimi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="Europe/Istanbul">Türkiye (UTC+3)</option>
+              <option value="Europe/London">Londra (UTC+0)</option>
+              <option value="Asia/Dubai">Dubai (UTC+4)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tarih Formatı
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Sistem Tercihleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Otomatik Yedekleme</h5>
+              <p className="text-sm text-gray-600">Günlük otomatik veri yedeklemesi</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Gelişmiş Güvenlik</h5>
+              <p className="text-sm text-gray-600">İki faktörlü kimlik doğrulama</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-    return { success: true, data: { conversation_id: data[0]?.conversation_id } };
-  } catch (error) {
-    console.error('Get or create conversation error:', error);
-    return getOrCreateConversationFromLocalStorage(userId1, userId2);
-  }
-};
-
-// LocalStorage fallback for conversation
-const getOrCreateConversationFromLocalStorage = (userId1: string, userId2: string): { success: boolean; data: { conversation_id: string }; error?: string } => {
-  const conversationId = [userId1, userId2].sort().join('-');
-  return { success: true, data: { conversation_id: conversationId } };
-};
-
-// 📨 Mesajları getir (Supabase optimized)
-export const getChatMessages = async (conversationId: string): Promise<{ success: boolean; data?: ChatMessage[]; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return getChatMessagesFromLocalStorage(conversationId);
-    }
-
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role),
-        reply_to_message:chat_messages(content, sender:chat_users(name))
-      `)
-      .eq('conversation_id', conversationId)
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: true })
-      .limit(100);
-
-    if (error) {
-      console.error('Supabase messages error:', error);
-      return getChatMessagesFromLocalStorage(conversationId);
-    }
-
-    return { success: true, data: data || [] };
-  } catch (error) {
-    console.error('Messages fetch error:', error);
-    return getChatMessagesFromLocalStorage(conversationId);
-  }
-};
-
-// LocalStorage fallback for messages
-const getChatMessagesFromLocalStorage = (conversationId: string): { success: boolean; data: ChatMessage[]; error?: string } => {
-  try {
-    const mockMessages: ChatMessage[] = [
-      {
-        id: 'msg-1',
-        conversation_id: conversationId,
-        sender_id: 'user-2',
-        sender: {
-          id: 'user-2',
-          name: 'Dr. Mehmet Özkan',
-          avatar_url: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=150',
-          role: 'doctor'
-        } as ChatUser,
-        message_type: 'text',
-        content: 'Maria Rodriguez hastası için konsültasyon raporu hazır. Kalp cerrahisi için uygun.',
-        is_edited: false,
-        is_deleted: false,
-        created_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-        read_by: ['user-1']
-      },
-      {
-        id: 'msg-2',
-        conversation_id: conversationId,
-        sender_id: 'user-1',
-        sender: {
-          id: 'user-1',
-          name: 'Fatma Yılmaz',
-          avatar_url: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150',
-          role: 'agent'
-        } as ChatUser,
-        message_type: 'text',
-        content: 'Teşekkürler doktor. Hastaya bilgi verip teklif hazırlayacağım.',
-        is_edited: false,
-        is_deleted: false,
-        created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        read_by: []
-      }
-    ];
-
-    return { success: true, data: mockMessages };
-  } catch (error) {
-    return { success: false, data: [], error: error.message };
-  }
-};
-
-// 📤 Mesaj gönder (Supabase optimized)
-export const sendChatMessage = async (payload: {
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  message_type?: 'text' | 'file' | 'image' | 'system';
-  file_url?: string;
-  file_name?: string;
-  file_size?: number;
-  reply_to?: string;
-}): Promise<{ success: boolean; data?: ChatMessage; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return sendChatMessageToLocalStorage(payload);
-    }
-
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .insert([{
-        conversation_id: payload.conversation_id,
-        sender_id: payload.sender_id,
-        content: payload.content,
-        message_type: payload.message_type || 'text',
-        file_url: payload.file_url,
-        file_name: payload.file_name,
-        file_size: payload.file_size,
-        reply_to: payload.reply_to
-      }])
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role)
-      `)
-      .single();
-
-    if (error) {
-      console.error('Supabase send message error:', error);
-      return sendChatMessageToLocalStorage(payload);
-    }
-
-    // Update conversation last_message_at
-    await supabase
-      .from('chat_conversations')
-      .update({ last_message_at: new Date().toISOString() })
-      .eq('id', payload.conversation_id);
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Send message error:', error);
-    return sendChatMessageToLocalStorage(payload);
-  }
-};
-
-// LocalStorage fallback for sending messages
-const sendChatMessageToLocalStorage = (payload: any): { success: boolean; data: ChatMessage; error?: string } => {
-  try {
-    const newMessage: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      conversation_id: payload.conversation_id,
-      sender_id: payload.sender_id,
-      sender: {
-        id: payload.sender_id,
-        name: 'Current User',
-        avatar_url: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150',
-        role: 'agent'
-      } as ChatUser,
-      message_type: payload.message_type || 'text',
-      content: payload.content,
-      file_url: payload.file_url,
-      file_name: payload.file_name,
-      file_size: payload.file_size,
-      reply_to: payload.reply_to,
-      is_edited: false,
-      is_deleted: false,
-      created_at: new Date().toISOString(),
-      read_by: []
-    };
-
-    return { success: true, data: newMessage };
-  } catch (error) {
-    return { success: false, data: null, error: error.message };
-  }
-};
-
-// 👁️ Mesajı okundu işaretle (Supabase RPC)
-export const markChatMessageAsRead = async (messageId: string, userId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase.rpc('mark_message_as_read', {
-      message_id: messageId,
-      reader_id: userId
-    });
-
-    if (error) {
-      console.error('Mark as read error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Mark as read error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// ✏️ Mesaj düzenle
-export const editChatMessage = async (messageId: string, content: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_messages')
-      .update({
-        content,
-        updated_at: new Date().toISOString(),
-        is_edited: true
-      })
-      .eq('id', messageId);
-
-    if (error) {
-      console.error('Edit message error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Edit message error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// 🗑️ Mesaj sil (soft delete)
-export const deleteChatMessage = async (messageId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_messages')
-      .update({
-        is_deleted: true,
-        content: 'Bu mesaj silindi',
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', messageId);
-
-    if (error) {
-      console.error('Delete message error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Delete message error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// 🔄 Realtime mesaj dinleme (Supabase Realtime)
-export const subscribeToChatMessages = (
-  conversationId: string, 
-  onNewMessage: (message: ChatMessage) => void, 
-  onMessageUpdate: (message: ChatMessage) => void
-): RealtimeChannel | null => {
-  if (!isSupabaseEnabled) {
-    console.log('Supabase not enabled, using mock realtime');
-    return null;
-  }
-
-  const channel = supabase
-    .channel(`chat-conversation-${conversationId}`)
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `conversation_id=eq.${conversationId}`
-      },
-      async (payload) => {
-        console.log('🔥 New message received:', payload.new);
+  const renderLeadAssignment = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Otomatik Lead Atama Kuralları</h3>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h4 className="font-medium text-blue-900 mb-2">Otomatik Lead Dağıtımı</h4>
+          <p className="text-sm text-blue-700">
+            Gelen lead'ler belirlenen kurallara göre otomatik olarak satış temsilcilerine atanır
+          </p>
+        </div>
         
-        // Sender bilgisini çek
-        const { data: messageWithSender } = await supabase
-          .from('chat_messages')
-          .select(`
-            *,
-            sender:chat_users(name, avatar_url, role)
-          `)
-          .eq('id', payload.new.id)
-          .single();
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Atama Yöntemi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled>
+              <option value="round-robin" selected>Sıralı Dağıtım (Round Robin)</option>
+              <option value="workload">İş Yükü Bazlı</option>
+              <option value="performance">Performans Bazlı</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Sistem otomatik olarak lead'leri sırayla temsilcilere atar.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Maksimum Lead/Temsilci
+            </label>
+            <input
+              type="number"
+              defaultValue="50"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Otomatik Atama KPI Metrikleri</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Dönüşüm Hedefi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="25"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">% dönüşüm oranı</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Yanıt Süresi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="30"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">dakika içinde</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Takip Sıklığı</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="3"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">gün arayla</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-        if (messageWithSender) {
-          onNewMessage(messageWithSender);
-        }
-      }
-    )
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `conversation_id=eq.${conversationId}`
-      },
-      async (payload) => {
-        console.log('✏️ Message updated:', payload.new);
+  const renderIntegrations = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Harici Entegrasyonlar</h3>
         
-        const { data: messageWithSender } = await supabase
-          .from('chat_messages')
-          .select(`
-            *,
-            sender:chat_users(name, avatar_url, role)
-          `)
-          .eq('id', payload.new.id)
-          .single();
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">WhatsApp Business API</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Hasta iletişimi ve otomatik mesajlaşma</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="API Token"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Telefon Numarası"
+                defaultValue="+90 555 123 45 67"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Meta Ads (Facebook/Instagram)</h4>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Beklemede</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Lead generation ve reklam yönetimi</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="App ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="App Secret"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">PayTR Ödeme Gateway</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Online ödeme işlemleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Merchant ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Merchant Key"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Google Analytics</h4>
+              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Pasif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Web sitesi analitikleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Tracking ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Property ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-        if (messageWithSender) {
-          onMessageUpdate(messageWithSender);
-        }
-      }
-    )
-    .subscribe();
+  const renderClinicManagement = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Klinik Yapı Ayarları</h3>
+        
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium text-blue-900">Çoklu Şube Sistemi</h4>
+              <p className="text-sm text-blue-700 mt-1">
+                {branchSettings.isMultiBranch 
+                  ? 'Sistem şu anda çoklu şube modunda çalışıyor'
+                  : 'Sistem şu anda tek şube modunda çalışıyor'
+                }
+              </p>
+            </div>
+            <button
+              onClick={toggleMultiBranch}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                branchSettings.isMultiBranch ? 'bg-blue-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  branchSettings.isMultiBranch ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
 
-  return channel;
-};
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Tek Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Basit yönetim ve kurulum</li>
+              <li>• Düşük maliyet</li>
+              <li>• Hızlı başlangıç</li>
+              <li>• Küçük-orta klinikler için ideal</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Çoklu Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Ölçeklenebilir yapı</li>
+              <li>• Şube bazlı raporlama</li>
+              <li>• Merkezi yönetim</li>
+              <li>• Büyük hastane zincirleri için</li>
+            </ul>
+          </div>
+        </div>
 
-// 🔌 Realtime subscription'ı kapat
-export const unsubscribeFromChatMessages = (channel: RealtimeChannel | null) => {
-  if (channel && supabase) {
-    supabase.removeChannel(channel);
-  }
-};
+        {branchSettings.isMultiBranch && (
+          <div className="mt-6">
+            <h4 className="font-medium text-gray-900 mb-3">Mevcut Şubeler ({branches.length})</h4>
+            <div className="space-y-2">
+              {branches.map(branch => (
+                <div key={branch.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-gray-900">{branch.name}</span>
+                    <span className="text-sm text-gray-500 ml-2">{branch.address}</span>
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    branch.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {branch.isActive ? 'Aktif' : 'Pasif'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
-// 📁 Dosya yükleme (Supabase Storage)
-export const uploadChatFileToStorage = async (file: File, conversationId: string): Promise<{ success: boolean; url?: string; error?: string }> => {
-  try {
-    // LocalStorage ile dosya yükleme simülasyonu
-    // Gerçek uygulamada dosyalar base64 olarak saklanabilir veya başka bir çözüm kullanılabilir
-    const fileUrl = await convertFileToDataUrl(file);
-    
-    // Dosya bilgilerini LocalStorage'a kaydet
-    const fileData = {
-      id: `file_${Date.now()}`,
-      conversationId,
-      fileName: file.name,
-      fileSize: file.size,
-      fileType: file.type,
-      url: fileUrl,
-      uploadedAt: new Date().toISOString()
-    };
-    
-    // Mevcut dosyaları al
-    const existingFiles = JSON.parse(localStorage.getItem('chat_files') || '[]');
-    existingFiles.push(fileData);
-    
-    // LocalStorage'a kaydet
-    localStorage.setItem('chat_files', JSON.stringify(existingFiles));
-    
-    return { success: true, url: fileUrl };
-  } catch (error) {
-    console.error('File upload error:', error);
-    return { success: false, error: error.message };
-  }
-};
+  const renderReportsAndAnalytics = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Analitik & Raporlar</h3>
+        <p className="text-gray-600 mb-6">Sistem performansı, hasta verileri ve iş zekası raporları</p>
+      </div>
 
-// Dosyayı Data URL'ye çevirme fonksiyonu
-const convertFileToDataUrl = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-};
-// LocalStorage'dan dosya alma fonksiyonu
-export const getChatFileFromStorage = async (fileId: string): Promise<{ success: boolean; data?: any; error?: string }> => {
-  try {
-    const files = JSON.parse(localStorage.getItem('chat_files') || '[]');
-    const file = files.find((f: any) => f.id === fileId);
-    
-    if (file) {
-      return { success: true, data: file };
-    } else {
-      return { success: false, error: 'Dosya bulunamadı' };
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Toplam Hasta</p>
+              <p className="text-3xl font-bold text-blue-600">2,847</p>
+            </div>
+            <Users className="h-8 w-8 text-blue-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+12% bu ay</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aylık Gelir</p>
+              <p className="text-3xl font-bold text-green-600">₺18.2M</p>
+            </div>
+            <CreditCard className="h-8 w-8 text-green-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+23% geçen aya göre</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Dönüşüm Oranı</p>
+              <p className="text-3xl font-bold text-purple-600">68%</p>
+            </div>
+            <BarChart3 className="h-8 w-8 text-purple-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+5% artış</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aktif Tedavi</p>
+              <p className="text-3xl font-bold text-orange-600">156</p>
+            </div>
+            <FileText className="h-8 w-8 text-orange-600" />
+          </div>
+          <p className="text-sm text-blue-600 mt-2">Bu hafta</p>
+        </div>
+      </div>
+
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Aylık Gelir Trendi</h4>
+          <div className="h-64 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <BarChart3 className="h-12 w-12 text-blue-500 mx-auto mb-3" />
+              <p className="text-gray-600">Gelir grafiği burada görünecek</p>
+              <p className="text-sm text-gray-500">Chart.js entegrasyonu ile</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Patient Distribution */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Hasta Dağılımı</h4>
+          <div className="space-y-4">
+            {[
+              { country: 'Türkiye', patients: 1247, percentage: 44, color: 'bg-red-500' },
+              { country: 'İspanya', patients: 589, percentage: 21, color: 'bg-yellow-500' },
+              { country: 'İngiltere', patients: 423, percentage: 15, color: 'bg-blue-500' },
+              { country: 'Almanya', patients: 356, percentage: 12, color: 'bg-black' },
+              { country: 'Diğer', patients: 232, percentage: 8, color: 'bg-gray-400' }
+            ].map((item, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+                  <span className="text-sm font-medium text-gray-900">{item.country}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${item.color}`}
+                      style={{ width: `${item.percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-gray-600 w-12 text-right">{item.patients}</span>
+                  <span className="text-sm text-gray-500 w-8 text-right">%{item.percentage}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Treatment Analytics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Tedavi Kategorileri Performansı</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Kardiyoloji', patients: 456, revenue: '₺6.7M', growth: '+15%', color: 'text-red-600 bg-red-50' },
+            { name: 'Ortopedi', patients: 389, revenue: '₺5.4M', growth: '+8%', color: 'text-blue-600 bg-blue-50' },
+            { name: 'Onkoloji', patients: 234, revenue: '₺9.1M', growth: '+22%', color: 'text-purple-600 bg-purple-50' },
+            { name: 'Plastik Cerrahi', patients: 567, revenue: '₺4.2M', growth: '+12%', color: 'text-pink-600 bg-pink-50' }
+          ].map((treatment, index) => (
+            <div key={index} className={`p-4 rounded-lg ${treatment.color}`}>
+              <h5 className="font-semibold mb-2">{treatment.name}</h5>
+              <div className="space-y-1 text-sm">
+                <p><span className="font-medium">Hasta:</span> {treatment.patients}</p>
+                <p><span className="font-medium">Gelir:</span> {treatment.revenue}</p>
+                <p><span className="font-medium">Büyüme:</span> {treatment.growth}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Report Generation */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Rapor Oluşturma</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Finansal Rapor</h5>
+            <p className="text-sm text-gray-600 mb-3">Gelir, gider ve karlılık analizi</p>
+            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Hasta Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">Hasta demografisi ve tedavi istatistikleri</p>
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Performans Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">KPI'lar ve hedef karşılaştırması</p>
+            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Real-time Metrics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Gerçek Zamanlı Metrikler</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-green-800">Bugünkü Randevular</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-green-700">24</p>
+            <p className="text-xs text-green-600">+3 son 1 saatte</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-blue-800">Aktif Kullanıcılar</span>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-blue-700">47</p>
+            <p className="text-xs text-blue-600">Online şu anda</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-purple-800">Yeni Lead'ler</span>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-purple-700">12</p>
+            <p className="text-xs text-purple-600">Bugün gelen</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-orange-800">Sistem Durumu</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <p className="text-2xl font-bold text-orange-700">99.9%</p>
+            <p className="text-xs text-orange-600">Uptime</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Export Options */}
+      <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Veri Dışa Aktarma</h4>
+        <div className="flex flex-wrap gap-3">
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>Excel (.xlsx)</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>PDF Raporu</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <Database className="h-4 w-4" />
+            <span>CSV Verisi</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <BarChart3 className="h-4 w-4" />
+            <span>Dashboard PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPlaceholderContent = (title: string) => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      {title !== 'E-Posta Ayarları' ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-sm text-yellow-800">
+            {title} modülü geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.
+          </p>
+        </div>
+      ) : renderEmailSettings()}
+    </div>
+  );
+
+  const renderEmailSettings = () => (
+    <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center space-x-2 mb-2">
+          <Mail className="h-5 w-5 text-blue-600" />
+          <h4 className="font-medium text-blue-900">SMTP Ayarları</h4>
+        </div>
+        <p className="text-sm text-blue-700">
+          Bu ayarlar, sistem tarafından gönderilen e-postaların yapılandırmasını belirler. Kullanıcı bildirimleri, şifre sıfırlama ve otomatik e-postalar için kullanılır.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Sunucu
+          </label>
+          <input
+            type="text"
+            defaultValue="smtp.gmail.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Port
+          </label>
+          <input
+            type="number"
+            defaultValue="587"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            E-posta Adresi
+          </label>
+          <input
+            type="email"
+            defaultValue="no-reply@duendehealthcrm.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Şifre
+          </label>
+          <div className="relative">
+            <input
+              type="password"
+              defaultValue="••••••••"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+              <Eye className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Gönderen Adı
+          </label>
+          <input
+            type="text"
+            defaultValue="Duende Health CRM"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SSL/TLS
+          </label>
+          <select
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            defaultValue="tls"
+          >
+            <option value="none">Yok</option>
+            <option value="ssl">SSL</option>
+            <option value="tls">TLS</option>
+          </select>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">E-posta Bildirimleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Yeni Kullanıcı Bildirimi</h5>
+              <p className="text-sm text-gray-600">Yeni kullanıcı oluşturulduğunda hoş geldiniz e-postası</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Şifre Sıfırlama</h5>
+              <p className="text-sm text-gray-600">Şifre sıfırlama bağlantıları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Güvenlik Uyarıları</h5>
+              <p className="text-sm text-gray-600">Şüpheli giriş denemeleri ve güvenlik olayları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Test ve Doğrulama</h4>
+        <div className="flex space-x-3">
+          <input
+            type="email"
+            placeholder="Test e-postası gönderilecek adres"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Test E-postası Gönder
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          İptal
+        </button>
+        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          Ayarları Kaydet
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'general':
+        return renderGeneralSettings();
+      case 'lead-assignment':
+        return renderLeadAssignment();
+      case 'integrations':
+        return renderIntegrations();
+      case 'clinic':
+        return renderClinicManagement();
+      case 'roles':
+        return <RolePermissionManagement />;
+      case 'legal-security':
+        return <LegalSecurityCompliance />;
+      case 'ai-automation':
+        return <AIAutomationImprovement />;
+      case 'users':
+        return <UserManagement />;
+      case 'inventory':
+        return <InventoryManagement />;
+      case 'payments':
+        return <PaymentManagement />;
+      case 'patient-portal':
+        return <PatientPortal />;
+      case 'data-management':
+        return <DataExportImport />;
+      case 'reports':
+        return renderReportsAndAnalytics();
+      case 'notifications':
+        return renderPlaceholderContent('Bildirim Ayarları'); 
+      case 'language':
+        return renderPlaceholderContent('Dil Ayarları');
+      case 'email':
+        return <EmailSettings />;
+      case 'payment':
+        return renderPlaceholderContent('Ödeme Ayarları');
+      case 'templates':
+        return renderPlaceholderContent('Belge Şablonları');
+      case 'help':
+        return renderPlaceholderContent('Yardım ve Destek');
+      default:
+        return renderGeneralSettings();
     }
-  } catch (error) {
-    return { success: false, error: 'Dosya okuma hatası' };
-  }
-};
-
-// LocalStorage'dan tüm chat dosyalarını alma
-export const getAllChatFiles = async (conversationId?: string): Promise<{ success: boolean; data?: any[]; error?: string }> => {
-  try {
-    const files = JSON.parse(localStorage.getItem('chat_files') || '[]');
-    
-    if (conversationId) {
-      const conversationFiles = files.filter((f: any) => f.conversationId === conversationId);
-      return { success: true, data: conversationFiles };
-    }
-    
-    return { success: true, data: files };
-  } catch (error) {
-    return { success: false, error: 'Dosyalar yüklenirken hata oluştu' };
-  }
-};
-
-// LocalStorage'dan dosya silme
-export const deleteChatFileFromStorage = async (fileId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    const files = JSON.parse(localStorage.getItem('chat_files') || '[]');
-    const updatedFiles = files.filter((f: any) => f.id !== fileId);
-    
-    localStorage.setItem('chat_files', JSON.stringify(updatedFiles));
-    
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: 'Dosya silinirken hata oluştu' };
-  }
-};
-
-// localStorage keys for fallback
-const STORAGE_KEYS = {
-  USERS: 'crm_chat_users',
-  MESSAGES: 'crm_chat_messages',
-  CONVERSATIONS: 'crm_chat_conversations',
-  STATUS: 'crm_user_status',
-  FILES: 'chat_files'
-};
-
-export interface ChatUser {
-  id: string;
-  user_id: string;
-  tenant_id: string;
-  name: string;
-  role: string;
-  branch_id?: string;
-  avatar_url?: string;
-  status: 'online' | 'offline' | 'away' | 'busy';
-  last_seen: string;
-  is_active: boolean;
-}
-
-export interface ChatConversation {
-  id: string;
-  tenant_id: string;
-  type: 'direct' | 'group' | 'channel';
-  name?: string;
-  description?: string;
-  avatar_url?: string;
-  created_by: string;
-  is_active: boolean;
-  last_message_at: string;
-  participants?: ChatUser[];
-  unread_count?: number;
-  last_message?: ChatMessage;
-}
-
-export interface ChatMessage {
-  id: string;
-  conversation_id: string;
-  sender_id: string;
-  sender?: ChatUser;
-  message_type: 'text' | 'file' | 'image' | 'system' | 'appointment_request';
-  content: string;
-  file_url?: string;
-  file_name?: string;
-  file_size?: number;
-  metadata?: any;
-  reply_to?: string;
-  is_edited: boolean;
-  is_deleted: boolean;
-  created_at: string;
-  read_by?: string[];
-}
-
-export interface TypingIndicator {
-  conversation_id: string;
-  user_id: string;
-  user_name: string;
-  started_at: string;
-}
-
-// Chat kullanıcılarını getir
-export const getChatUsers = async (tenantId: string = 'tenant-001'): Promise<{ success: boolean; data: ChatUser[]; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      const localUsers = getChatUsersFromLocalStorage();
-      return { success: true, data: localUsers };
-    }
-
-    const { data, error } = await supabase
-      .from('chat_users')
-      .select(`
-        id,
-        user_id,
-        tenant_id,
-        name,
-        role,
-        branch_id,
-        avatar_url,
-        status,
-        last_seen,
-        is_active
-      `)
-      .eq('tenant_id', tenantId)
-      .eq('is_active', true)
-      .order('status', { ascending: false })
-      .order('name');
-
-    if (error) {
-      console.error('Supabase chat users error:', error);
-      const localUsers = getChatUsersFromLocalStorage();
-      return { success: false, data: localUsers, error: error.message };
-    }
-
-    return { success: true, data: data || [] };
-  } catch (error) {
-    console.error('Chat users fetch error:', error);
-    const localUsers = getChatUsersFromLocalStorage();
-    return { success: false, data: localUsers, error: error.message };
-  }
-};
-
-// LocalStorage fallback for chat users
-const getChatUsersFromLocalStorage = (): ChatUser[] => {
-  try {
-    const mockUsers: ChatUser[] = [
-      {
-        id: 'user-1',
-        user_id: 'auth-user-1',
-        tenant_id: 'tenant-001',
-        name: 'Fatma Yılmaz',
-        role: 'agent',
-        branch_id: 'branch-1',
-        avatar_url: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150',
-        status: 'online',
-        last_seen: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 'user-2',
-        user_id: 'auth-user-2',
-        tenant_id: 'tenant-001',
-        name: 'Dr. Mehmet Özkan',
-        role: 'doctor',
-        branch_id: 'branch-1',
-        avatar_url: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=150',
-        status: 'away',
-        last_seen: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-        is_active: true
-      },
-      {
-        id: 'user-3',
-        user_id: 'auth-user-3',
-        tenant_id: 'tenant-001',
-        name: 'Zeynep Demir',
-        role: 'coordinator',
-        branch_id: 'branch-1',
-        avatar_url: 'https://images.pexels.com/photos/7180651/pexels-photo-7180651.jpeg?auto=compress&cs=tinysrgb&w=150',
-        status: 'online',
-        last_seen: new Date().toISOString(),
-        is_active: true
-      },
-      {
-        id: 'user-4',
-        user_id: 'auth-user-4',
-        tenant_id: 'tenant-001',
-        name: 'Ahmet Kaya',
-        role: 'agent',
-        branch_id: 'branch-1',
-        avatar_url: 'https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=150',
-        status: 'busy',
-        last_seen: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        is_active: true
-      }
-    ];
-
-    return mockUsers;
-  } catch (error) {
-    return [];
-  }
-};
-
-// Konuşmaları getir
-export const getConversations = async (userId: string): Promise<{ success: boolean; data?: ChatConversation[]; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return getConversationsFromLocalStorage();
-    }
-
-    const { data, error } = await supabase
-      .from('chat_conversations')
-      .select(`
-        *,
-        participants:chat_participants(
-          user:chat_users(*)
-        ),
-        last_message:chat_messages(
-          *,
-          sender:chat_users(name, avatar_url)
-        )
-      `)
-      .eq('chat_participants.user_id', userId)
-      .eq('chat_participants.is_active', true)
-      .order('last_message_at', { ascending: false });
-
-    if (error) {
-      console.error('Supabase conversations error:', error);
-      return getConversationsFromLocalStorage();
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Conversations fetch error:', error);
-    return getConversationsFromLocalStorage();
-  }
-};
-
-// LocalStorage fallback for conversations
-const getConversationsFromLocalStorage = (): { success: boolean; data: ChatConversation[]; error?: string } => {
-  try {
-    const mockConversations: ChatConversation[] = [
-      {
-        id: 'conv-1',
-        tenant_id: 'tenant-001',
-        type: 'direct',
-        name: 'Dr. Mehmet Özkan',
-        created_by: 'user-1',
-        is_active: true,
-        last_message_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        unread_count: 2
-      },
-      {
-        id: 'conv-2',
-        tenant_id: 'tenant-001',
-        type: 'group',
-        name: 'Satış Ekibi',
-        description: 'Satış temsilcileri koordinasyon grubu',
-        created_by: 'user-1',
-        is_active: true,
-        last_message_at: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
-        unread_count: 0
-      },
-      {
-        id: 'conv-3',
-        tenant_id: 'tenant-001',
-        type: 'direct',
-        name: 'Zeynep Demir',
-        created_by: 'user-3',
-        is_active: true,
-        last_message_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        unread_count: 1
-      }
-    ];
-
-    return { success: true, data: mockConversations };
-  } catch (error) {
-    return { success: false, data: [], error: error.message };
-  }
-};
-
-// Mesajları getir
-export const getMessages = async (conversationId: string): Promise<{ success: boolean; data?: ChatMessage[]; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return getMessagesFromLocalStorage(conversationId);
-    }
-
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role),
-        read_by:chat_message_reads(user_id)
-      `)
-      .eq('conversation_id', conversationId)
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Supabase messages error:', error);
-      return getMessagesFromLocalStorage(conversationId);
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Messages fetch error:', error);
-    return getMessagesFromLocalStorage(conversationId);
-  }
-};
-
-// LocalStorage fallback for messages
-const getMessagesFromLocalStorage = (conversationId: string): { success: boolean; data: ChatMessage[]; error?: string } => {
-  try {
-    const mockMessages: ChatMessage[] = [
-      {
-        id: 'msg-1',
-        conversation_id: conversationId,
-        sender_id: 'user-2',
-        sender: {
-          id: 'user-2',
-          name: 'Dr. Mehmet Özkan',
-          avatar_url: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=150',
-          role: 'doctor'
-        } as ChatUser,
-        message_type: 'text',
-        content: 'Maria Rodriguez hastası için konsültasyon raporu hazır. Kalp cerrahisi için uygun.',
-        is_edited: false,
-        is_deleted: false,
-        created_at: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
-        read_by: ['user-1']
-      },
-      {
-        id: 'msg-2',
-        conversation_id: conversationId,
-        sender_id: 'user-1',
-        sender: {
-          id: 'user-1',
-          name: 'Fatma Yılmaz',
-          avatar_url: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150',
-          role: 'agent'
-        } as ChatUser,
-        message_type: 'text',
-        content: 'Teşekkürler doktor. Hastaya bilgi verip teklif hazırlayacağım.',
-        is_edited: false,
-        is_deleted: false,
-        created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-        read_by: []
-      },
-      {
-        id: 'msg-3',
-        conversation_id: conversationId,
-        sender_id: 'user-2',
-        sender: {
-          id: 'user-2',
-          name: 'Dr. Mehmet Özkan',
-          avatar_url: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=150',
-          role: 'doctor'
-        } as ChatUser,
-        message_type: 'text',
-        content: 'Tamam. Acil bir durum olursa hemen ara.',
-        is_edited: false,
-        is_deleted: false,
-        created_at: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
-        read_by: []
-      }
-    ];
-
-    return { success: true, data: mockMessages };
-  } catch (error) {
-    return { success: false, data: [], error: error.message };
-  }
-};
-
-// Mesaj gönder
-export const sendMessage = async (messageData: {
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  message_type?: string;
-  file_url?: string;
-  file_name?: string;
-  reply_to?: string;
-}): Promise<{ success: boolean; data?: ChatMessage; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return sendMessageToLocalStorage(messageData);
-    }
-
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .insert([{
-        ...messageData,
-        message_type: messageData.message_type || 'text'
-      }])
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role)
-      `)
-      .single();
-
-    if (error) {
-      console.error('Supabase send message error:', error);
-      return sendMessageToLocalStorage(messageData);
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Send message error:', error);
-    return sendMessageToLocalStorage(messageData);
-  }
-};
-
-// LocalStorage fallback for sending messages
-const sendMessageToLocalStorage = (messageData: any): { success: boolean; data: ChatMessage; error?: string } => {
-  try {
-    const newMessage: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      conversation_id: messageData.conversation_id,
-      sender_id: messageData.sender_id,
-      sender: {
-        id: messageData.sender_id,
-        name: 'Current User',
-        avatar_url: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150',
-        role: 'agent'
-      } as ChatUser,
-      message_type: messageData.message_type || 'text',
-      content: messageData.content,
-      file_url: messageData.file_url,
-      file_name: messageData.file_name,
-      reply_to: messageData.reply_to,
-      is_edited: false,
-      is_deleted: false,
-      created_at: new Date().toISOString(),
-      read_by: []
-    };
-
-    return { success: true, data: newMessage };
-  } catch (error) {
-    return { success: false, data: null, error: error.message };
-  }
-};
-
-// Konuşma oluştur
-export const createConversation = async (conversationData: {
-  type: 'direct' | 'group';
-  name?: string;
-  description?: string;
-  participant_ids: string[];
-  created_by: string;
-}): Promise<{ success: boolean; data?: ChatConversation; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return createConversationInLocalStorage(conversationData);
-    }
-
-    // Create conversation
-    const { data: conversation, error: convError } = await supabase
-      .from('chat_conversations')
-      .insert([{
-        tenant_id: 'tenant-001', // Should come from context
-        type: conversationData.type,
-        name: conversationData.name,
-        description: conversationData.description,
-        created_by: conversationData.created_by
-      }])
-      .select()
-      .single();
-
-    if (convError) {
-      console.error('Create conversation error:', convError);
-      return createConversationInLocalStorage(conversationData);
-    }
-
-    // Add participants
-    const participants = conversationData.participant_ids.map(userId => ({
-      conversation_id: conversation.id,
-      user_id: userId,
-      role: userId === conversationData.created_by ? 'admin' : 'member'
-    }));
-
-    const { error: partError } = await supabase
-      .from('chat_participants')
-      .insert(participants);
-
-    if (partError) {
-      console.error('Add participants error:', partError);
-    }
-
-    return { success: true, data: conversation };
-  } catch (error) {
-    console.error('Create conversation error:', error);
-    return createConversationInLocalStorage(conversationData);
-  }
-};
-
-// LocalStorage fallback for creating conversations
-const createConversationInLocalStorage = (conversationData: any): { success: boolean; data: ChatConversation; error?: string } => {
-  try {
-    const newConversation: ChatConversation = {
-      id: `conv-${Date.now()}`,
-      tenant_id: 'tenant-001',
-      type: conversationData.type,
-      name: conversationData.name,
-      description: conversationData.description,
-      created_by: conversationData.created_by,
-      is_active: true,
-      last_message_at: new Date().toISOString(),
-      unread_count: 0
-    };
-
-    return { success: true, data: newConversation };
-  } catch (error) {
-    return { success: false, data: null, error: error.message };
-  }
-};
-
-// Mesajı okundu olarak işaretle
-export const markMessageAsRead = async (messageId: string, userId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_message_reads')
-      .upsert([{
-        message_id: messageId,
-        user_id: userId
-      }]);
-
-    if (error) {
-      console.error('Mark as read error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Mark as read error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Kullanıcı durumunu güncelle
-export const updateUserStatus = async (userId: string, status: 'online' | 'offline' | 'away' | 'busy'): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_users')
-      .update({
-        status,
-        last_seen: new Date().toISOString()
-      })
-      .eq('user_id', userId);
-
-    if (error) {
-      console.error('Update status error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Update status error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Yazıyor göstergesi
-export const setTypingIndicator = async (conversationId: string, userId: string, isTyping: boolean): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    if (isTyping) {
-      const { error } = await supabase
-        .from('chat_typing_indicators')
-        .upsert([{
-          conversation_id: conversationId,
-          user_id: userId
-        }]);
-
-      if (error) {
-        console.error('Set typing error:', error);
-        return { success: false, error: error.message };
-      }
-    } else {
-      const { error } = await supabase
-        .from('chat_typing_indicators')
-        .delete()
-        .eq('conversation_id', conversationId)
-        .eq('user_id', userId);
-
-      if (error) {
-        console.error('Remove typing error:', error);
-        return { success: false, error: error.message };
-      }
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Typing indicator error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Realtime subscription setup
-export const subscribeToConversation = (conversationId: string, onMessage: (message: ChatMessage) => void, onTyping: (typing: TypingIndicator[]) => void) => {
-  if (!isSupabaseEnabled) {
-    console.log('Supabase not enabled, using mock realtime');
-    return null;
-  }
-
-  const channel = supabase
-    .channel(`conversation-${conversationId}`)
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `conversation_id=eq.${conversationId}`
-      },
-      (payload) => {
-        console.log('New message received:', payload.new);
-        onMessage(payload.new as ChatMessage);
-      }
-    )
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'chat_typing_indicators',
-        filter: `conversation_id=eq.${conversationId}`
-      },
-      async (payload) => {
-        // Fetch current typing indicators
-        const { data } = await supabase
-          .from('chat_typing_indicators')
-          .select(`
-            *,
-            user:chat_users(name)
-          `)
-          .eq('conversation_id', conversationId);
-
-        onTyping(data || []);
-      }
-    )
-    .subscribe();
-
-  return channel;
-};
-
-// Unsubscribe from realtime
-export const unsubscribeFromConversation = (channel: any) => {
-  if (channel && supabase) {
-    supabase.removeChannel(channel);
-  }
-};
-
-// File upload for chat
-export const uploadChatFile = async (file: File, conversationId: string): Promise<{ success: boolean; url?: string; error?: string }> => {
-  try {
-    // LocalStorage ile dosya yükleme
-    return await uploadChatFileToStorage(file, conversationId);
-  } catch (error) {
-    console.error('File upload error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Search messages
-export const searchMessages = async (query: string, conversationId?: string): Promise<{ success: boolean; data?: ChatMessage[]; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true, data: [] }; // Mock search
-    }
-
-    let queryBuilder = supabase
-      .from('chat_messages')
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role),
-        conversation:chat_conversations(name, type)
-      `)
-      .ilike('content', `%${query}%`)
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (conversationId) {
-      queryBuilder = queryBuilder.eq('conversation_id', conversationId);
-    }
-
-    const { data, error } = await queryBuilder;
-
-    if (error) {
-      console.error('Search messages error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Search messages error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Gelişmiş Chat Stats - Supabase uyumlu
-export const getChatStats = async (userId: string) => {
-  try {
-    if (!isSupabaseEnabled) {
-      return getChatStatsFromLocalStorage(userId);
-    }
-
-    // Use localStorage fallback to avoid RLS policy issues
-    console.log('Using localStorage fallback for chat stats due to RLS policy issues');
-    return getChatStatsFromLocalStorage(userId);
-  } catch (error) {
-    console.error('Chat stats error:', error);
-    return getChatStatsFromLocalStorage(userId);
-  }
-};
-
-// LocalStorage fallback for chat stats
-const getChatStatsFromLocalStorage = (userId: string) => {
-  try {
-    const messages = JSON.parse(localStorage.getItem(STORAGE_KEYS.MESSAGES) || '[]');
-    const userMessages = messages.filter(m => m.senderId === userId || m.recipientId === userId);
-    
-    return {
-      totalMessages: userMessages.length,
-      sentMessages: messages.filter(m => m.senderId === userId).length,
-      receivedMessages: messages.filter(m => m.recipientId === userId).length,
-      unreadMessages: messages.filter(m => m.recipientId === userId && !m.read).length,
-      activeConversations: 0,
-      todayMessages: 0,
-      thisWeekMessages: 0
-    };
-  } catch (error) {
-    return { totalMessages: 0, unreadMessages: 0, activeConversations: 0, sentMessages: 0, receivedMessages: 0, todayMessages: 0, thisWeekMessages: 0 };
-  }
-};
-
-// Eski mesajları temizle - Supabase uyumlu
-export const clearOldMessages = async (days: number): Promise<number> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return clearOldMessagesFromLocalStorage(days);
-    }
-
-    // Use localStorage fallback to avoid RLS policy issues
-    console.log('Using localStorage fallback for message cleanup due to RLS policy issues');
-    return clearOldMessagesFromLocalStorage(days);
-  } catch (error) {
-    console.error('Message cleanup error:', error);
-    return clearOldMessagesFromLocalStorage(days);
-  }
-};
-
-// LocalStorage fallback for clearing old messages
-const clearOldMessagesFromLocalStorage = (days: number): number => {
-  try {
-    const messages = JSON.parse(localStorage.getItem(STORAGE_KEYS.MESSAGES) || '[]');
-    const cutoffDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-    
-    const filteredMessages = messages.filter(msg => 
-      new Date(msg.createdAt) > cutoffDate
-    );
-    
-    const removedCount = messages.length - filteredMessages.length;
-    localStorage.setItem(STORAGE_KEYS.MESSAGES, JSON.stringify(filteredMessages));
-    
-    return removedCount;
-  } catch (error) {
-    console.error('LocalStorage cleanup error:', error);
-    return 0;
-  }
-};
-
-// Mesajları getir - Supabase uyumlu (detailed version)
-const getMessagesDetailed = async (conversationId: string): Promise<{ success: boolean; data?: ChatMessage[]; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return getMessagesFromLocalStorage(conversationId);
-    }
-
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role),
-        reply_to_message:chat_messages(content, sender:chat_users(name))
-      `)
-      .eq('conversation_id', conversationId)
-      .eq('is_deleted', false)
-      .order('created_at', { ascending: true })
-      .limit(50);
-
-    if (error) {
-      console.error('Supabase messages error:', error);
-      return getMessagesFromLocalStorage(conversationId);
-    }
-
-    return { success: true, data: data || [] };
-  } catch (error) {
-    console.error('Messages fetch error:', error);
-    return getMessagesFromLocalStorage(conversationId);
-  }
-};
-
-// Mesaj gönder - Supabase uyumlu (detailed version)
-const sendMessageDetailed = async (payload: {
-  conversation_id: string;
-  sender_id: string;
-  content: string;
-  message_type?: string;
-  file_url?: string;
-  file_name?: string;
-  reply_to?: string;
-}): Promise<{ success: boolean; data?: ChatMessage; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return sendMessageToLocalStorage(payload);
-    }
-
-    const { data, error } = await supabase
-      .from('chat_messages')
-      .insert([{
-        conversation_id: payload.conversation_id,
-        sender_id: payload.sender_id,
-        content: payload.content,
-        message_type: payload.message_type || 'text',
-        file_url: payload.file_url,
-        file_name: payload.file_name,
-        reply_to: payload.reply_to
-      }])
-      .select(`
-        *,
-        sender:chat_users(name, avatar_url, role)
-      `)
-      .single();
-
-    if (error) {
-      console.error('Supabase send message error:', error);
-      return sendMessageToLocalStorage(payload);
-    }
-
-    // Update conversation last_message_at
-    await supabase
-      .from('chat_conversations')
-      .update({ last_message_at: new Date().toISOString() })
-      .eq('id', payload.conversation_id);
-
-    return { success: true, data };
-  } catch (error) {
-    console.error('Send message error:', error);
-    return sendMessageToLocalStorage(payload);
-  }
-};
-
-// Konuşma oluştur veya bul
-export const findOrCreateConversation = async (userId1: string, userId2: string): Promise<{ success: boolean; data?: ChatConversation; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return findOrCreateConversationInLocalStorage(userId1, userId2);
-    }
-
-    // Önce mevcut konuşmayı ara
-    const { data: existingConv, error: searchError } = await supabase
-      .from('chat_conversations')
-      .select(`
-        *,
-        participants:chat_participants(user_id)
-      `)
-      .eq('type', 'direct')
-      .limit(100);
-
-    if (!searchError && existingConv) {
-      // İki kullanıcının da katıldığı konuşmayı bul
-      const conversation = existingConv.find(conv => {
-        const participantIds = conv.participants.map(p => p.user_id);
-        return participantIds.includes(userId1) && participantIds.includes(userId2);
-      });
-
-      if (conversation) {
-        return { success: true, data: conversation };
-      }
-    }
-
-    // Konuşma yoksa oluştur
-    const { data: newConv, error: createError } = await supabase
-      .from('chat_conversations')
-      .insert([{
-        tenant_id: 'tenant-001',
-        type: 'direct',
-        created_by: userId1
-      }])
-      .select()
-      .single();
-
-    if (createError) {
-      console.error('Create conversation error:', createError);
-      return findOrCreateConversationInLocalStorage(userId1, userId2);
-    }
-
-    // Katılımcıları ekle
-    const { error: participantsError } = await supabase
-      .from('chat_participants')
-      .insert([
-        { conversation_id: newConv.id, user_id: userId1, role: 'member' },
-        { conversation_id: newConv.id, user_id: userId2, role: 'member' }
-      ]);
-
-    if (participantsError) {
-      console.error('Add participants error:', participantsError);
-    }
-
-    return { success: true, data: newConv };
-  } catch (error) {
-    console.error('Find or create conversation error:', error);
-    return findOrCreateConversationInLocalStorage(userId1, userId2);
-  }
-};
-
-// LocalStorage fallback for conversation
-const findOrCreateConversationInLocalStorage = (userId1: string, userId2: string): { success: boolean; data: ChatConversation; error?: string } => {
-  const conversationId = [userId1, userId2].sort().join('-');
-  
-  const conversation: ChatConversation = {
-    id: conversationId,
-    tenant_id: 'tenant-001',
-    type: 'direct',
-    created_by: userId1,
-    is_active: true,
-    last_message_at: new Date().toISOString()
   };
 
-  return { success: true, data: conversation };
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 p-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-3 p-4 rounded-lg text-left transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                }`}
+              >
+                <tab.icon className="h-5 w-5 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{tab.label}</p>
+                  <p className="text-xs text-gray-500 truncate">{tab.description}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {renderContent()}
+          
+          {/* Save Button */}
+        </div>
+    </div>
+  );
 };
 
-// Mesajı okundu işaretle (detailed version)
-const markMessageAsReadDetailed = async (messageId: string, userId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_message_reads')
-      .upsert([{
-        message_id: messageId,
-        user_id: userId
-      }]);
-
-    if (error) {
-      console.error('Mark as read error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Mark as read error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Mesaj düzenle
-export const editMessage = async (messageId: string, content: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_messages')
-      .update({
-        content,
-        edited_at: new Date().toISOString(),
-        is_edited: true
-      })
-      .eq('id', messageId);
-
-    if (error) {
-      console.error('Edit message error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Edit message error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Mesaj sil (soft delete)
-export const deleteMessage = async (messageId: string): Promise<{ success: boolean; error?: string }> => {
-  try {
-    if (!isSupabaseEnabled) {
-      return { success: true }; // LocalStorage'da simüle et
-    }
-
-    const { error } = await supabase
-      .from('chat_messages')
-      .update({
-        is_deleted: true,
-        content: 'Bu mesaj silindi'
-      })
-      .eq('id', messageId);
-
-    if (error) {
-      console.error('Delete message error:', error);
-      return { success: false, error: error.message };
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error('Delete message error:', error);
-    return { success: false, error: error.message };
-  }
-};
-
-// Realtime mesaj dinleme
-export const subscribeToMessages = (conversationId: string, onNewMessage: (message: ChatMessage) => void, onMessageUpdate: (message: ChatMessage) => void): RealtimeChannel | null => {
-  if (!isSupabaseEnabled) {
-    console.log('Supabase not enabled, using mock realtime');
-    return null;
-  }
-
-  const channel = supabase
-    .channel(`conversation-${conversationId}`)
-    .on(
-      'postgres_changes',
-      {
-        event: 'INSERT',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `conversation_id=eq.${conversationId}`
-      },
-      async (payload) => {
-        console.log('New message received:', payload.new);
-        
-        // Sender bilgisini çek
-        const { data: messageWithSender } = await supabase
-          .from('chat_messages')
-          .select(`
-            *,
-            sender:chat_users(name, avatar_url, role)
-          `)
-          .eq('id', payload.new.id)
-          .single();
-
-        if (messageWithSender) {
-          onNewMessage(messageWithSender);
-        }
-      }
-    )
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'chat_messages',
-        filter: `conversation_id=eq.${conversationId}`
-      },
-      async (payload) => {
-        console.log('Message updated:', payload.new);
-        
-        const { data: messageWithSender } = await supabase
-          .from('chat_messages')
-          .select(`
-            *,
-            sender:chat_users(name, avatar_url, role)
-          `)
-          .eq('id', payload.new.id)
-          .single();
-
-        if (messageWithSender) {
-          onMessageUpdate(messageWithSender);
-        }
-      }
-    )
-    .subscribe();
-
-  return channel;
-};
-
-// Realtime subscription'ı kapat
-export const unsubscribeFromMessages = (channel: RealtimeChannel | null) => {
-  if (channel && supabase) {
-    supabase.removeChannel(channel);
-  }
-};
-
-export { supabase as chatSupabase };
+export default Settings;

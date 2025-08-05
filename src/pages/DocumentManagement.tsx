@@ -1,817 +1,811 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
-  FileText, 
-  Upload, 
-  Download, 
-  Eye, 
-  Edit, 
-  Trash2,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-  PenTool,
-  Shield,
-  Globe,
-  Smartphone,
-  Monitor,
-  Camera,
-  Paperclip,
-  Send,
-  Plus,
-  Filter,
-  Search,
-  User,
-  Calendar,
-  MapPin,
-  Languages,
-  Building2,
-  AlertTriangle,
-  RefreshCw,
-  Settings,
+  Settings as SettingsIcon, 
+  Building2, 
+  Users, 
+  Shield, 
+  Database, 
   Bell,
-  Lock,
-  Unlock,
-  FileCheck,
-  FilePlus,
-  FileX,
+  Globe,
+  Mail,
+  CreditCard,
+  FileText,
+  BarChart3,
+  HelpCircle,
+  UserPlus,
   Zap,
   Bot,
-  Activity,
-  BarChart3,
-  Users,
-  Database,
-  Wifi,
-  WifiOff,
-  QrCode,
-  Fingerprint,
-  Key,
-  CreditCard,
-  Phone,
-  Mail,
-  MessageCircle,
-  Video,
-  Image,
-  Folder,
-  FolderOpen,
-  Archive,
-  Star,
-  Flag,
-  Tag,
-  Link,
-  Share2,
-  Copy,
-  ExternalLink,
-  History,
-  Timer,
-  Target,
-  TrendingUp,
-  Award,
-  Bookmark,
-  Hash,
-  AtSign,
-  Percent,
-  DollarSign,
-  Euro,
-  Banknote,
-  Heart
+  Package,
+  Handshake
 } from 'lucide-react';
+import { useBranch } from '../contexts/BranchContext';
+import RolePermissionManagement from './RolePermissionManagement';
+import LegalSecurityCompliance from './LegalSecurityCompliance';
+import EmailSettings from '../components/settings/EmailSettings';
+import AIAutomationImprovement from './AIAutomationImprovement';
+import UserManagement from './UserManagement';
+import InventoryManagement from './InventoryManagement';
+import PartnerManagement from './PartnerManagement';
+import PaymentManagement from './PaymentManagement';
+import PatientPortal from './PatientPortal';
+import DataExportImport from '../components/common/DataExportImport';
 
-const DocumentManagement = () => {
-  const [activeTab, setActiveTab] = useState('consents');
-  const [selectedDocument, setSelectedDocument] = useState(null);
+const Settings = () => {
+  const { t } = useTranslation();
+  const { branchSettings, toggleMultiBranch, branches } = useBranch();
+  const [activeTab, setActiveTab] = useState('general');
 
-  const consents = [
-    {
-      id: 1,
-      patientName: 'Maria Rodriguez',
-      documentType: 'Ameliyat Onamı',
-      treatment: 'Kalp Cerrahisi',
-      language: 'İspanyolca',
-      status: 'İmzalandı',
-      signedDate: '2025-01-14 14:30',
-      signedDevice: 'Tablet',
-      doctor: 'Dr. Mehmet Yılmaz',
-      version: 'v2.1',
-      ipAddress: '192.168.1.100',
-      digitalSignature: 'SHA256:a1b2c3d4...',
-      witnessName: 'Hemşire Ayşe Kaya',
-      image: 'https://images.pexels.com/photos/7180651/pexels-photo-7180651.jpeg?auto=compress&cs=tinysrgb&w=150'
-    },
-    {
-      id: 2,
-      patientName: 'Ahmed Hassan',
-      documentType: 'KVKK Aydınlatma Metni',
-      treatment: 'Diz Protezi',
-      language: 'Arapça',
-      status: 'Bekliyor',
-      signedDate: null,
-      signedDevice: null,
-      doctor: 'Dr. Fatma Kaya',
-      version: 'v1.3',
-      ipAddress: null,
-      digitalSignature: null,
-      witnessName: null,
-      image: 'https://images.pexels.com/photos/8376277/pexels-photo-8376277.jpeg?auto=compress&cs=tinysrgb&w=150'
-    },
-    {
-      id: 3,
-      patientName: 'Sarah Thompson',
-      documentType: 'Anestezi Onamı',
-      treatment: 'Plastik Cerrahi',
-      language: 'İngilizce',
-      status: 'İmzalandı',
-      signedDate: '2025-01-13 16:45',
-      signedDevice: 'Mobil',
-      doctor: 'Dr. Ayşe Demir',
-      version: 'v1.8',
-      ipAddress: '10.0.0.25',
-      digitalSignature: 'SHA256:e5f6g7h8...',
-      witnessName: 'Hemşire Zeynep Demir',
-      image: 'https://images.pexels.com/photos/5327585/pexels-photo-5327585.jpeg?auto=compress&cs=tinysrgb&w=150'
-    }
+  const tabs = [
+    { id: 'general', label: t('settings.generalSettings'), icon: SettingsIcon, description: 'Sistem genel ayarları ve tercihler' },
+    { id: 'lead-assignment', label: t('settings.leadAssignment'), icon: UserPlus, description: 'Lead atama kuralları ve KPI metrikleri' },
+    { id: 'integrations', label: t('settings.integrations'), icon: Zap, description: 'Harici servisler ve API entegrasyonları' },
+    { id: 'roles', label: t('settings.roles'), icon: Shield, description: 'Kullanıcı rolleri ve yetkilendirme' },
+    { id: 'users', label: t('settings.users'), icon: Users, description: 'Kullanıcı hesapları ve erişim kontrolü' },
+    { id: 'notifications', label: t('settings.notifications'), icon: Bell, description: 'Sistem bildirimleri ve hatırlatıcılar' },
+    { id: 'language', label: t('settings.language'), icon: Globe, description: 'Dil, para birimi ve bölge ayarları' },
+    { id: 'email', label: t('settings.email'), icon: Mail, description: 'SMTP yapılandırması ve şablonlar' },
+    { id: 'clinic', label: t('settings.clinic'), icon: Building2, description: 'Klinik ve şube bilgileri' },
+    { id: 'payment', label: t('settings.payment'), icon: CreditCard, description: 'Ödeme yöntemleri ve gateway yapılandırması' },
+    { id: 'templates', label: t('settings.templates'), icon: FileText, description: 'Sözleşme ve form şablonları' },
+    { id: 'reports', label: t('settings.reports'), icon: BarChart3, description: 'Raporlama ve analiz yapılandırması' },
+    { id: 'legal-security', label: t('settings.legalSecurity'), icon: Shield, description: 'KVKK/GDPR uyumu ve güvenlik politikaları' },
+    { id: 'ai-automation', label: t('settings.aiAutomation'), icon: Bot, description: 'Yapay zeka ve otomasyon ayarları' },
+    { id: 'data-management', label: t('settings.dataManagement'), icon: Database, description: 'LocalStorage veri yönetimi ve yedekleme' },
+    { id: 'help', label: t('Even though your project is already optimized, it's now too big to handle. Try using a <code>.bolt/ignore</code> file or splitting your project into smaller parts. Need help? You'll find all the steps below.
   ];
 
-  const templates = [
-    {
-      id: 1,
-      name: 'Ameliyat Onamı',
-      category: 'Cerrahi',
-      languages: ['Türkçe', 'İngilizce', 'Arapça', 'İspanyolca'],
-      version: 'v2.1',
-      lastUpdated: '2025-01-10',
-      usage: 45,
-      status: 'Aktif',
-      description: 'Cerrahi müdahaleler için genel onam formu'
-    },
-    {
-      id: 2,
-      name: 'KVKK Aydınlatma Metni',
-      category: 'Yasal',
-      languages: ['Türkçe', 'İngilizce'],
-      version: 'v1.3',
-      lastUpdated: '2025-01-08',
-      usage: 128,
-      status: 'Aktif',
-      description: 'Kişisel verilerin korunması hakkında bilgilendirme'
-    },
-    {
-      id: 3,
-      name: 'Anestezi Onamı',
-      category: 'Anestezi',
-      languages: ['Türkçe', 'İngilizce', 'Arapça'],
-      version: 'v1.8',
-      lastUpdated: '2025-01-05',
-      usage: 67,
-      status: 'Aktif',
-      description: 'Anestezi uygulaması için özel onam formu'
-    },
-    {
-      id: 4,
-      name: 'Taburcu Formu',
-      category: 'Taburcu',
-      languages: ['Türkçe', 'İngilizce'],
-      version: 'v1.2',
-      lastUpdated: '2025-01-03',
-      usage: 89,
-      status: 'Aktif',
-      description: 'Hasta taburcu işlemleri için form'
-    }
-  ];
-
-  const documentCategories = [
-    { id: 'consent', name: 'Onam Formları', icon: FileCheck, count: 156, color: 'text-green-600' },
-    { id: 'legal', name: 'Yasal Belgeler', icon: Shield, count: 89, color: 'text-blue-600' },
-    { id: 'medical', name: 'Tıbbi Raporlar', icon: Heart, count: 234, color: 'text-red-600' },
-    { id: 'discharge', name: 'Taburcu Evrakları', icon: FileText, count: 67, color: 'text-purple-600' },
-    { id: 'insurance', name: 'Sigorta Belgeleri', icon: CreditCard, count: 45, color: 'text-orange-600' },
-    { id: 'travel', name: 'Seyahat Evrakları', icon: Globe, count: 78, color: 'text-teal-600' }
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'İmzalandı': return 'bg-green-100 text-green-800';
-      case 'Bekliyor': return 'bg-yellow-100 text-yellow-800';
-      case 'Reddedildi': return 'bg-red-100 text-red-800';
-      case 'Süresi Doldu': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'İmzalandı': return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case 'Bekliyor': return <Clock className="h-4 w-4 text-yellow-600" />;
-      case 'Reddedildi': return <AlertCircle className="h-4 w-4 text-red-600" />;
-      case 'Süresi Doldu': return <AlertTriangle className="h-4 w-4 text-gray-600" />;
-      default: return <Clock className="h-4 w-4 text-gray-600" />;
-    }
-  };
-
-  const getDeviceIcon = (device: string) => {
-    switch (device) {
-      case 'Tablet': return <Smartphone className="h-4 w-4 text-blue-600" />;
-      case 'Mobil': return <Smartphone className="h-4 w-4 text-green-600" />;
-      case 'PC': return <Monitor className="h-4 w-4 text-purple-600" />;
-      default: return <Monitor className="h-4 w-4 text-gray-600" />;
-    }
-  };
-
-  return (
+  const renderGeneralSettings = () => (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Evrak & Onam Yönetimi</h1>
-          <p className="text-gray-600 mt-1">Dijital imza, çok dilli onamlar ve belge şablonları</p>
-        </div>
-        <div className="flex space-x-3">
-          <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-            <Upload className="h-4 w-4" />
-            <span>Şablon Yükle</span>
-          </button>
-          <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
-            <FileText className="h-4 w-4" />
-            <span>Yeni Şablon</span>
-          </button>
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Genel Sistem Ayarları</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sistem Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur CRM"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Şirket Adı
+            </label>
+            <input
+              type="text"
+              defaultValue="SağlıkTur Medikal"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Zaman Dilimi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="Europe/Istanbul">Türkiye (UTC+3)</option>
+              <option value="Europe/London">Londra (UTC+0)</option>
+              <option value="Asia/Dubai">Dubai (UTC+4)</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tarih Formatı
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            </select>
+          </div>
         </div>
       </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Sistem Tercihleri</h4>
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Toplam Belge</p>
-              <p className="text-3xl font-bold text-blue-600">1,247</p>
+              <h5 className="font-medium text-gray-900">Otomatik Yedekleme</h5>
+              <p className="text-sm text-gray-600">Günlük otomatik veri yedeklemesi</p>
             </div>
-            <FileText className="h-8 w-8 text-blue-600" />
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
           </div>
-          <p className="text-sm text-green-600 mt-2">+89 bu ay</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">İmzalanan</p>
-              <p className="text-3xl font-bold text-green-600">1,156</p>
+              <h5 className="font-medium text-gray-900">Gelişmiş Güvenlik</h5>
+              <p className="text-sm text-gray-600">İki faktörlü kimlik doğrulama</p>
             </div>
-            <CheckCircle className="h-8 w-8 text-green-600" />
-          </div>
-          <p className="text-sm text-green-600 mt-2">%92.7 başarı</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Bekleyen</p>
-              <p className="text-3xl font-bold text-yellow-600">67</p>
-            </div>
-            <Clock className="h-8 w-8 text-yellow-600" />
-          </div>
-          <p className="text-sm text-yellow-600 mt-2">İmza bekliyor</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Şablon Sayısı</p>
-              <p className="text-3xl font-bold text-purple-600">24</p>
-            </div>
-            <FilePlus className="h-8 w-8 text-purple-600" />
-          </div>
-          <p className="text-sm text-purple-600 mt-2">6 dilde</p>
-        </div>
-      </div>
-
-      {/* Document Categories */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Belge Kategorileri</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {documentCategories.map((category) => (
-            <div
-              key={category.id}
-              className="p-4 rounded-lg border-2 border-dashed border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <category.icon className={`h-6 w-6 ${category.color}`} />
-                <span className="text-2xl font-bold text-gray-700">{category.count}</span>
-              </div>
-              <h4 className="font-semibold text-gray-900 text-sm mb-1">{category.name}</h4>
-              <p className="text-xs text-gray-600">Aktif belgeler</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-        {/* Tabs */}
-        <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6">
-            {[
-              { id: 'consents', label: 'Onam Takibi', icon: FileCheck, count: 67 },
-              { id: 'templates', label: 'Şablonlar', icon: FileText, count: 24 },
-              { id: 'signatures', label: 'Dijital İmzalar', icon: PenTool, count: null },
-              { id: 'compliance', label: 'Uyumluluk', icon: Shield, count: null },
-              { id: 'analytics', label: 'Analitik', icon: BarChart3, count: null },
-              { id: 'settings', label: 'Ayarlar', icon: Settings, count: null }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === tab.id
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <tab.icon className="h-4 w-4" />
-                <span>{tab.label}</span>
-                {tab.count && (
-                  <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
-                    {tab.count}
-                  </span>
-                )}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
-          {activeTab === 'consents' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Onam Takibi</h3>
-                <div className="flex space-x-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Hasta, belge ara..."
-                      className="pl-10 pr-4 py-2 w-64 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
-                    Filtrele
-                  </button>
-                </div>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Hasta & Belge
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Tedavi & Doktor
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        İmza Durumu
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Teknik Detaylar
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        İşlemler
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {consents.map((consent) => (
-                      <tr key={consent.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <img
-                              className="h-10 w-10 rounded-full object-cover"
-                              src={consent.image}
-                              alt={consent.patientName}
-                            />
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{consent.patientName}</div>
-                              <div className="text-sm text-gray-500">{consent.documentType}</div>
-                              <div className="text-xs text-gray-400 flex items-center space-x-1">
-                                <Languages className="h-3 w-3" />
-                                <span>{consent.language}</span>
-                                <span>•</span>
-                                <span>{consent.version}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{consent.treatment}</div>
-                          <div className="text-sm text-gray-500">{consent.doctor}</div>
-                        </td>
-                        
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center space-x-2 mb-1">
-                            {getStatusIcon(consent.status)}
-                            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(consent.status)}`}>
-                              {consent.status}
-                            </span>
-                          </div>
-                          {consent.signedDate && (
-                            <div className="text-xs text-gray-500">{consent.signedDate}</div>
-                          )}
-                          {consent.signedDevice && (
-                            <div className="flex items-center space-x-1 text-xs text-gray-500">
-                              {getDeviceIcon(consent.signedDevice)}
-                              <span>{consent.signedDevice}</span>
-                            </div>
-                          )}
-                        </td>
-                        
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {consent.ipAddress && (
-                            <div className="text-xs text-gray-600 space-y-1">
-                              <div>IP: {consent.ipAddress}</div>
-                              <div>İmza: {consent.digitalSignature?.substring(0, 20)}...</div>
-                              {consent.witnessName && (
-                                <div>Tanık: {consent.witnessName}</div>
-                              )}
-                            </div>
-                          )}
-                        </td>
-                        
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button className="text-blue-600 hover:text-blue-700 p-1 rounded">
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            <button className="text-green-600 hover:text-green-700 p-1 rounded">
-                              <Download className="h-4 w-4" />
-                            </button>
-                            <button className="text-purple-600 hover:text-purple-700 p-1 rounded">
-                              <Send className="h-4 w-4" />
-                            </button>
-                            <button className="text-orange-600 hover:text-orange-700 p-1 rounded">
-                              <RefreshCw className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'templates' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Belge Şablonları</h3>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm">
-                  Yeni Şablon
-                </button>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {templates.map((template) => (
-                  <div key={template.id} className="border border-gray-200 rounded-lg p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h4 className="font-medium text-gray-900">{template.name}</h4>
-                        <p className="text-sm text-gray-600">{template.description}</p>
-                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mt-2">
-                          {template.category}
-                        </span>
-                      </div>
-                      <div className="flex space-x-2">
-                        <button className="text-blue-600 hover:text-blue-700">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button className="text-gray-600 hover:text-gray-700">
-                          <Copy className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div>
-                        <span className="text-sm font-medium text-gray-700">Desteklenen Diller:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {template.languages.map((lang, index) => (
-                            <span key={index} className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-                              {lang}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm text-gray-600">
-                        <span>Versiyon: {template.version}</span>
-                        <span>Kullanım: {template.usage} kez</span>
-                      </div>
-                      
-                      <div className="text-xs text-gray-500">
-                        Son güncelleme: {template.lastUpdated}
-                      </div>
-                    </div>
-                    
-                    <div className="flex space-x-2 mt-4">
-                      <button className="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-3 rounded text-sm">
-                        Önizle
-                      </button>
-                      <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-3 rounded text-sm">
-                        Düzenle
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'signatures' && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Dijital İmza Sistemi</h3>
-              
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-medium text-blue-900 mb-2">🔐 Güvenli Dijital İmza</h4>
-                <p className="text-sm text-blue-700">
-                  Tüm imzalar 256-bit şifreleme ile korunur ve yasal geçerliliğe sahiptir.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="font-medium text-gray-900 mb-4">İmza Yöntemleri</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <PenTool className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <h5 className="font-medium text-gray-900">Dokunmatik İmza</h5>
-                        <p className="text-sm text-gray-600">Tablet ve mobil cihazlarda</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <QrCode className="h-5 w-5 text-green-600" />
-                      <div>
-                        <h5 className="font-medium text-gray-900">QR Kod İmza</h5>
-                        <p className="text-sm text-gray-600">Hızlı onay için</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Fingerprint className="h-5 w-5 text-purple-600" />
-                      <div>
-                        <h5 className="font-medium text-gray-900">Biyometrik İmza</h5>
-                        <p className="text-sm text-gray-600">Parmak izi ile</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h4 className="font-medium text-gray-900 mb-4">Güvenlik Özellikleri</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3">
-                      <Shield className="h-5 w-5 text-green-600" />
-                      <span className="text-sm text-gray-700">256-bit SSL şifreleme</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Clock className="h-5 w-5 text-blue-600" />
-                      <span className="text-sm text-gray-700">Zaman damgası</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <MapPin className="h-5 w-5 text-orange-600" />
-                      <span className="text-sm text-gray-700">Konum kaydı</span>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <Database className="h-5 w-5 text-purple-600" />
-                      <span className="text-sm text-gray-700">Blockchain kayıt</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'compliance' && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Yasal Uyumluluk</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                  <h4 className="font-medium text-green-900 mb-4">✅ Uyumluluk Durumu</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-green-800">KVKK Uyumu</span>
-                      <span className="text-sm font-medium text-green-800">%100</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-green-800">GDPR Uyumu</span>
-                      <span className="text-sm font-medium text-green-800">%98</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-green-800">Sağlık Mevzuatı</span>
-                      <span className="text-sm font-medium text-green-800">%95</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-green-800">Dijital İmza Yasası</span>
-                      <span className="text-sm font-medium text-green-800">%100</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                  <h4 className="font-medium text-blue-900 mb-4">📋 Denetim Kayıtları</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-blue-800">Toplam İşlem:</span>
-                      <span className="font-medium text-blue-800">1,247</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-800">Başarılı İmza:</span>
-                      <span className="font-medium text-blue-800">1,156</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-800">Reddedilen:</span>
-                      <span className="font-medium text-blue-800">24</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-blue-800">Bekleyen:</span>
-                      <span className="font-medium text-blue-800">67</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'analytics' && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Belge Analitikleri</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <FileText className="h-6 w-6 text-blue-600" />
-                    <span className="text-2xl font-bold text-blue-700">1,247</span>
-                  </div>
-                  <h4 className="font-medium text-blue-900">Toplam Belge</h4>
-                  <p className="text-sm text-blue-700">Bu ay</p>
-                </div>
-
-                <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                    <span className="text-2xl font-bold text-green-700">92.7%</span>
-                  </div>
-                  <h4 className="font-medium text-green-900">İmza Başarı Oranı</h4>
-                  <p className="text-sm text-green-700">Son 30 gün</p>
-                </div>
-
-                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <Timer className="h-6 w-6 text-purple-600" />
-                    <span className="text-2xl font-bold text-purple-700">2.3dk</span>
-                  </div>
-                  <h4 className="font-medium text-purple-900">Ortalama İmza Süresi</h4>
-                  <p className="text-sm text-purple-700">Belge başına</p>
-                </div>
-
-                <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <Globe className="h-6 w-6 text-orange-600" />
-                    <span className="text-2xl font-bold text-orange-700">6</span>
-                  </div>
-                  <h4 className="font-medium text-orange-900">Desteklenen Dil</h4>
-                  <p className="text-sm text-orange-700">Aktif şablonlar</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'settings' && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-gray-900">Belge Yönetimi Ayarları</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Genel Ayarlar</h4>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h5 className="font-medium text-gray-900">Otomatik Hatırlatma</h5>
-                        <p className="text-sm text-gray-600">İmzalanmayan belgeler için</p>
-                      </div>
-                      <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h5 className="font-medium text-gray-900">Çoklu Dil Desteği</h5>
-                        <p className="text-sm text-gray-600">Otomatik dil tespiti</p>
-                      </div>
-                      <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h5 className="font-medium text-gray-900">Blockchain Kayıt</h5>
-                        <p className="text-sm text-gray-600">İmzaların blockchain'e kaydı</p>
-                      </div>
-                      <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1 transition-transform" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-4">
-                  <h4 className="font-medium text-gray-900">Güvenlik Ayarları</h4>
-                  
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h5 className="font-medium text-gray-900">İki Faktörlü Doğrulama</h5>
-                        <p className="text-sm text-gray-600">Kritik belgeler için</p>
-                      </div>
-                      <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h5 className="font-medium text-gray-900">IP Kısıtlaması</h5>
-                        <p className="text-sm text-gray-600">Belirli IP'lerden erişim</p>
-                      </div>
-                      <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1 transition-transform" />
-                      </button>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h5 className="font-medium text-gray-900">Otomatik Arşivleme</h5>
-                        <p className="text-sm text-gray-600">Eski belgelerin arşivlenmesi</p>
-                      </div>
-                      <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
-                        <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* AI & Automation Features */}
-      <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-          <Bot className="h-5 w-5 text-green-600" />
-          <span>AI Destekli Belge Yönetimi & Otomasyonlar</span>
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Akıllı Şablon Önerisi</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Tedavi türüne göre otomatik şablon seçimi</li>
-              <li>• Hasta geçmişi bazlı özelleştirme</li>
-              <li>• Eksik alan tespiti ve uyarı</li>
-              <li>• Dil bazlı şablon optimizasyonu</li>
-              <li>• Yasal gereklilik kontrolü</li>
-            </ul>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Otomatik İş Akışı</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Belge gönderim zamanlaması</li>
-              <li>• Hatırlatma sistemi</li>
-              <li>• Onay süreç yönetimi</li>
-              <li>• Otomatik arşivleme</li>
-              <li>• Uyumluluk kontrolü</li>
-            </ul>
-          </div>
-          
-          <div className="bg-white p-4 rounded-lg">
-            <h4 className="font-medium text-gray-900 mb-2">Güvenlik & Analitik</h4>
-            <ul className="text-sm text-gray-600 space-y-1">
-              <li>• Fraud detection sistemi</li>
-              <li>• Anormal aktivite tespiti</li>
-              <li>• Performans analizi</li>
-              <li>• Uyumluluk raporları</li>
-              <li>• Tahminsel analitik</li>
-            </ul>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1 transition-transform" />
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
+
+  const renderLeadAssignment = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Otomatik Lead Atama Kuralları</h3>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <h4 className="font-medium text-blue-900 mb-2">Otomatik Lead Dağıtımı</h4>
+          <p className="text-sm text-blue-700">
+            Gelen lead'ler belirlenen kurallara göre otomatik olarak satış temsilcilerine atanır
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Atama Yöntemi
+            </label>
+            <select className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent" disabled>
+              <option value="round-robin" selected>Sıralı Dağıtım (Round Robin)</option>
+              <option value="workload">İş Yükü Bazlı</option>
+              <option value="performance">Performans Bazlı</option>
+            </select>
+            <p className="text-xs text-gray-500 mt-1">Sistem otomatik olarak lead'leri sırayla temsilcilere atar.</p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Maksimum Lead/Temsilci
+            </label>
+            <input
+              type="number"
+              defaultValue="50"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Otomatik Atama KPI Metrikleri</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Dönüşüm Hedefi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="25"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">% dönüşüm oranı</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Yanıt Süresi</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="30"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">dakika içinde</span>
+            </div>
+          </div>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h5 className="font-medium text-gray-900">Takip Sıklığı</h5>
+            <div className="mt-2">
+              <input
+                type="number"
+                defaultValue="3"
+                className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+              />
+              <span className="text-xs text-gray-500">gün arayla</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderIntegrations = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Harici Entegrasyonlar</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">WhatsApp Business API</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Hasta iletişimi ve otomatik mesajlaşma</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="API Token"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Telefon Numarası"
+                defaultValue="+90 555 123 45 67"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Meta Ads (Facebook/Instagram)</h4>
+              <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Beklemede</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Lead generation ve reklam yönetimi</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="App ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="App Secret"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">PayTR Ödeme Gateway</h4>
+              <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Aktif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Online ödeme işlemleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Merchant ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Merchant Key"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-medium text-gray-900">Google Analytics</h4>
+              <span className="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Pasif</span>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">Web sitesi analitikleri</p>
+            <div className="space-y-2">
+              <input
+                type="text"
+                placeholder="Tracking ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+              <input
+                type="text"
+                placeholder="Property ID"
+                className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderClinicManagement = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Klinik Yapı Ayarları</h3>
+        
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="font-medium text-blue-900">Çoklu Şube Sistemi</h4>
+              <p className="text-sm text-blue-700 mt-1">
+                {branchSettings.isMultiBranch 
+                  ? 'Sistem şu anda çoklu şube modunda çalışıyor'
+                  : 'Sistem şu anda tek şube modunda çalışıyor'
+                }
+              </p>
+            </div>
+            <button
+              onClick={toggleMultiBranch}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                branchSettings.isMultiBranch ? 'bg-blue-600' : 'bg-gray-200'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  branchSettings.isMultiBranch ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Tek Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Basit yönetim ve kurulum</li>
+              <li>• Düşük maliyet</li>
+              <li>• Hızlı başlangıç</li>
+              <li>• Küçük-orta klinikler için ideal</li>
+            </ul>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h4 className="font-medium text-gray-900 mb-2">Çoklu Şube Modu</h4>
+            <ul className="text-sm text-gray-600 space-y-1">
+              <li>• Ölçeklenebilir yapı</li>
+              <li>• Şube bazlı raporlama</li>
+              <li>• Merkezi yönetim</li>
+              <li>• Büyük hastane zincirleri için</li>
+            </ul>
+          </div>
+        </div>
+
+        {branchSettings.isMultiBranch && (
+          <div className="mt-6">
+            <h4 className="font-medium text-gray-900 mb-3">Mevcut Şubeler ({branches.length})</h4>
+            <div className="space-y-2">
+              {branches.map(branch => (
+                <div key={branch.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="font-medium text-gray-900">{branch.name}</span>
+                    <span className="text-sm text-gray-500 ml-2">{branch.address}</span>
+                  </div>
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    branch.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  }`}>
+                    {branch.isActive ? 'Aktif' : 'Pasif'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderReportsAndAnalytics = () => (
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Analitik & Raporlar</h3>
+        <p className="text-gray-600 mb-6">Sistem performansı, hasta verileri ve iş zekası raporları</p>
+      </div>
+
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Toplam Hasta</p>
+              <p className="text-3xl font-bold text-blue-600">2,847</p>
+            </div>
+            <Users className="h-8 w-8 text-blue-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+12% bu ay</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aylık Gelir</p>
+              <p className="text-3xl font-bold text-green-600">₺18.2M</p>
+            </div>
+            <CreditCard className="h-8 w-8 text-green-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+23% geçen aya göre</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Dönüşüm Oranı</p>
+              <p className="text-3xl font-bold text-purple-600">68%</p>
+            </div>
+            <BarChart3 className="h-8 w-8 text-purple-600" />
+          </div>
+          <p className="text-sm text-green-600 mt-2">+5% artış</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Aktif Tedavi</p>
+              <p className="text-3xl font-bold text-orange-600">156</p>
+            </div>
+            <FileText className="h-8 w-8 text-orange-600" />
+          </div>
+          <p className="text-sm text-blue-600 mt-2">Bu hafta</p>
+        </div>
+      </div>
+
+      {/* Charts and Analytics */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Revenue Chart */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Aylık Gelir Trendi</h4>
+          <div className="h-64 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg flex items-center justify-center">
+            <div className="text-center">
+              <BarChart3 className="h-12 w-12 text-blue-500 mx-auto mb-3" />
+              <p className="text-gray-600">Gelir grafiği burada görünecek</p>
+              <p className="text-sm text-gray-500">Chart.js entegrasyonu ile</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Patient Distribution */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+          <h4 className="text-lg font-semibold text-gray-900 mb-4">Hasta Dağılımı</h4>
+          <div className="space-y-4">
+            {[
+              { country: 'Türkiye', patients: 1247, percentage: 44, color: 'bg-red-500' },
+              { country: 'İspanya', patients: 589, percentage: 21, color: 'bg-yellow-500' },
+              { country: 'İngiltere', patients: 423, percentage: 15, color: 'bg-blue-500' },
+              { country: 'Almanya', patients: 356, percentage: 12, color: 'bg-black' },
+              { country: 'Diğer', patients: 232, percentage: 8, color: 'bg-gray-400' }
+            ].map((item, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-3 h-3 rounded-full ${item.color}`}></div>
+                  <span className="text-sm font-medium text-gray-900">{item.country}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full ${item.color}`}
+                      style={{ width: `${item.percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm text-gray-600 w-12 text-right">{item.patients}</span>
+                  <span className="text-sm text-gray-500 w-8 text-right">%{item.percentage}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Treatment Analytics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Tedavi Kategorileri Performansı</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Kardiyoloji', patients: 456, revenue: '₺6.7M', growth: '+15%', color: 'text-red-600 bg-red-50' },
+            { name: 'Ortopedi', patients: 389, revenue: '₺5.4M', growth: '+8%', color: 'text-blue-600 bg-blue-50' },
+            { name: 'Onkoloji', patients: 234, revenue: '₺9.1M', growth: '+22%', color: 'text-purple-600 bg-purple-50' },
+            { name: 'Plastik Cerrahi', patients: 567, revenue: '₺4.2M', growth: '+12%', color: 'text-pink-600 bg-pink-50' }
+          ].map((treatment, index) => (
+            <div key={index} className={`p-4 rounded-lg ${treatment.color}`}>
+              <h5 className="font-semibold mb-2">{treatment.name}</h5>
+              <div className="space-y-1 text-sm">
+                <p><span className="font-medium">Hasta:</span> {treatment.patients}</p>
+                <p><span className="font-medium">Gelir:</span> {treatment.revenue}</p>
+                <p><span className="font-medium">Büyüme:</span> {treatment.growth}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Report Generation */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Rapor Oluşturma</h4>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Finansal Rapor</h5>
+            <p className="text-sm text-gray-600 mb-3">Gelir, gider ve karlılık analizi</p>
+            <button className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Hasta Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">Hasta demografisi ve tedavi istatistikleri</p>
+            <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+          
+          <div className="border border-gray-200 rounded-lg p-4">
+            <h5 className="font-medium text-gray-900 mb-2">Performans Raporu</h5>
+            <p className="text-sm text-gray-600 mb-3">KPI'lar ve hedef karşılaştırması</p>
+            <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm transition-colors">
+              Rapor Oluştur
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Real-time Metrics */}
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Gerçek Zamanlı Metrikler</h4>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-green-800">Bugünkü Randevular</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-green-700">24</p>
+            <p className="text-xs text-green-600">+3 son 1 saatte</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-blue-800">Aktif Kullanıcılar</span>
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-blue-700">47</p>
+            <p className="text-xs text-blue-600">Online şu anda</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-purple-800">Yeni Lead'ler</span>
+              <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+            </div>
+            <p className="text-2xl font-bold text-purple-700">12</p>
+            <p className="text-xs text-purple-600">Bugün gelen</p>
+          </div>
+          
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-orange-800">Sistem Durumu</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            </div>
+            <p className="text-2xl font-bold text-orange-700">99.9%</p>
+            <p className="text-xs text-orange-600">Uptime</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Export Options */}
+      <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+        <h4 className="text-lg font-semibold text-gray-900 mb-4">Veri Dışa Aktarma</h4>
+        <div className="flex flex-wrap gap-3">
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>Excel (.xlsx)</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <FileText className="h-4 w-4" />
+            <span>PDF Raporu</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <Database className="h-4 w-4" />
+            <span>CSV Verisi</span>
+          </button>
+          <button className="flex items-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 px-4 py-2 rounded-lg text-sm transition-colors">
+            <BarChart3 className="h-4 w-4" />
+            <span>Dashboard PNG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPlaceholderContent = (title: string) => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+      {title !== 'E-Posta Ayarları' ? (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <p className="text-sm text-yellow-800">
+            {title} modülü geliştirme aşamasındadır. Yakında kullanıma sunulacaktır.
+          </p>
+        </div>
+      ) : renderEmailSettings()}
+    </div>
+  );
+
+  const renderEmailSettings = () => (
+    <div className="space-y-6">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="flex items-center space-x-2 mb-2">
+          <Mail className="h-5 w-5 text-blue-600" />
+          <h4 className="font-medium text-blue-900">SMTP Ayarları</h4>
+        </div>
+        <p className="text-sm text-blue-700">
+          Bu ayarlar, sistem tarafından gönderilen e-postaların yapılandırmasını belirler. Kullanıcı bildirimleri, şifre sıfırlama ve otomatik e-postalar için kullanılır.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Sunucu
+          </label>
+          <input
+            type="text"
+            defaultValue="smtp.gmail.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SMTP Port
+          </label>
+          <input
+            type="number"
+            defaultValue="587"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            E-posta Adresi
+          </label>
+          <input
+            type="email"
+            defaultValue="no-reply@duendehealthcrm.com"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Şifre
+          </label>
+          <div className="relative">
+            <input
+              type="password"
+              defaultValue="••••••••"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+              <Eye className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Gönderen Adı
+          </label>
+          <input
+            type="text"
+            defaultValue="Duende Health CRM"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            SSL/TLS
+          </label>
+          <select
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            defaultValue="tls"
+          >
+            <option value="none">Yok</option>
+            <option value="ssl">SSL</option>
+            <option value="tls">TLS</option>
+          </select>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">E-posta Bildirimleri</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Yeni Kullanıcı Bildirimi</h5>
+              <p className="text-sm text-gray-600">Yeni kullanıcı oluşturulduğunda hoş geldiniz e-postası</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Şifre Sıfırlama</h5>
+              <p className="text-sm text-gray-600">Şifre sıfırlama bağlantıları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h5 className="font-medium text-gray-900">Güvenlik Uyarıları</h5>
+              <p className="text-sm text-gray-600">Şüpheli giriş denemeleri ve güvenlik olayları</p>
+            </div>
+            <button className="relative inline-flex h-6 w-11 items-center rounded-full bg-blue-600">
+              <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div className="border-t border-gray-200 pt-6">
+        <h4 className="text-md font-medium text-gray-900 mb-4">Test ve Doğrulama</h4>
+        <div className="flex space-x-3">
+          <input
+            type="email"
+            placeholder="Test e-postası gönderilecek adres"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+            Test E-postası Gönder
+          </button>
+        </div>
+      </div>
+      
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <button className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          İptal
+        </button>
+        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          Ayarları Kaydet
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'general':
+        return renderGeneralSettings();
+      case 'lead-assignment':
+        return renderLeadAssignment();
+      case 'integrations':
+        return renderIntegrations();
+      case 'clinic':
+        return renderClinicManagement();
+      case 'roles':
+        return <RolePermissionManagement />;
+      case 'legal-security':
+        return <LegalSecurityCompliance />;
+      case 'ai-automation':
+        return <AIAutomationImprovement />;
+      case 'users':
+        return <UserManagement />;
+      case 'inventory':
+        return <InventoryManagement />;
+      case 'payments':
+        return <PaymentManagement />;
+      case 'patient-portal':
+        return <PatientPortal />;
+      case 'data-management':
+        return <DataExportImport />;
+      case 'reports':
+        return renderReportsAndAnalytics();
+      case 'notifications':
+        return renderPlaceholderContent('Bildirim Ayarları'); 
+      case 'language':
+        return renderPlaceholderContent('Dil Ayarları');
+      case 'email':
+        return <EmailSettings />;
+      case 'payment':
+        return renderPlaceholderContent('Ödeme Ayarları');
+      case 'templates':
+        return renderPlaceholderContent('Belge Şablonları');
+      case 'help':
+        return renderPlaceholderContent('Yardım ve Destek');
+      default:
+        return renderGeneralSettings();
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">{t('settings.title')}</h1>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-1 p-1">
+            {tabs.map((tab) => (
+import { FileText, Upload, Download, Eye, Edit, Trash2, CheckCircle, Clock, PenTool, Shield, Smartphone, Plus, Search, Languages, RefreshCw, Settings, Bot } from 'lucide-react';
+              <button
+  );
 };
 
-export default DocumentManagement;
+export default Settings;

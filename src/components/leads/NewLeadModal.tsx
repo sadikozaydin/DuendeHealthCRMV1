@@ -784,9 +784,11 @@ const Settings = () => {
       case 'payment':
         return renderPlaceholderContent('Ödeme Ayarları');
       case 'templates':
+        return renderPlaceholderContent('Belge Şablonları');
       case 'help':
         return renderPlaceholderContent('Yardım ve Destek');
       default:
+        return renderGeneralSettings();
     }
   };
 
